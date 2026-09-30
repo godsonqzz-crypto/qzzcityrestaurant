@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="QzzCityRestaurant — Burgers, chicken and chips in Hammarsdale. Free delivery. Order on WhatsApp.">
+  <title>QzzCityRestaurant | Burgers, Chicken & Chips</title>
+  <style>
+    :root{--yellow:#ffd400;--black:#111;--dark:#1b1b1b;--white:#fff;--gray:#f4f4f4;--green:#25d366}
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--gray);color:var(--black);line-height:1.5}
+    header{background:var(--black);color:white;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px #0003}
+    .nav{max-width:1100px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+    .logo{font-size:1.45rem;font-weight:900;color:var(--yellow);letter-spacing:.3px}.logo span{color:white}
+    nav a{color:white;text-decoration:none;margin-left:18px;font-weight:700;font-size:.95rem}
+    nav a:hover{color:var(--yellow)}
+    .hero{background:linear-gradient(135deg,#111 0%,#252525 60%,#111 100%);color:white;padding:72px 20px;text-align:center}
+    .badge{display:inline-block;background:var(--yellow);color:#111;padding:7px 14px;border-radius:999px;font-weight:900;font-size:.82rem;margin-bottom:16px}
+    h1{font-size:clamp(2.4rem,7vw,5rem);line-height:.98;margin:0 0 18px;font-weight:1000}
+    .hero p{max-width:650px;margin:0 auto 26px;font-size:1.15rem;color:#eee}
+    .buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-block;padding:14px 20px;border-radius:10px;text-decoration:none;font-weight:900;border:2px solid var(--yellow)}
+    .btn-primary{background:var(--yellow);color:#111}.btn-secondary{color:white}
+    .section{max-width:1100px;margin:auto;padding:55px 20px}
+    .section h2{text-align:center;font-size:2rem;margin:0 0 8px}.sub{text-align:center;color:#666;margin:0 0 30px}
+    .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+    .card{background:white;border-radius:16px;padding:22px;box-shadow:0 4px 18px #0000000d;border:1px solid #e8e8e8}
+    .card h3{margin:0 0 7px;font-size:1.12rem}.price{font-size:1.45rem;font-weight:1000;margin-top:10px}.tag{font-size:.75rem;background:#eee;border-radius:20px;padding:4px 8px;color:#555}
+    .order-box{background:var(--yellow);border-radius:20px;padding:35px 24px;text-align:center}
+    .order-box h2{margin-top:0}.order-box p{max-width:650px;margin:0 auto 20px}
+    .whatsapp{background:var(--green);color:white;border-color:var(--green)}
+    .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+    .info div{background:white;border-radius:14px;padding:20px;text-align:center}.info strong{display:block;margin-bottom:5px}
+    footer{background:#111;color:#bbb;text-align:center;padding:28px 20px}.footer-brand{color:var(--yellow);font-weight:900}
+    @media(max-width:700px){nav{display:none}.hero{padding:58px 18px}.section{padding:42px 16px}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">QzzCity<span>Restaurant</span></div>
+    <nav><a href="#menu">Menu</a><a href="#order">Order</a><a href="#contact">Contact</a></nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="badge">FREE DELIVERY • HAMMARSDALE</div>
+    <h1>THE BURGER MAN<br>IS READY FOR YOU.</h1>
+    <p>Fresh burgers, chicken and chips from QzzCityRestaurant. Great food, great combos and easy ordering on WhatsApp.</p>
+    <div class="buttons">
+      <a class="btn btn-primary" href="https://wa.me/27715382395?text=Hi%20QzzCityRestaurant%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">ORDER ON WHATSAPP</a>
+      <a class="btn btn-secondary" href="#menu">VIEW MENU</a>
+    </div>
+  </section>
+
+  <section class="section" id="menu">
+    <h2>Our Menu 🍔</h2>
+    <p class="sub">Simple, tasty and affordable.</p>
+    <div class="menu-grid">
+      <article class="card"><span class="tag">COMBO</span><h3>Burger + Hot Dog Combo</h3><div class="price">R30</div></article>
+      <article class="card"><span class="tag">COMBO</span><h3>2-Burger Combo</h3><div class="price">R35</div></article>
+      <article class="card"><span class="tag">COMBO</span><h3>Burger + Chips Combo</h3><div class="price">R40</div></article>
+      <article class="card"><span class="tag">BURGER</span><h3>Single Burger</h3><div class="price">R20</div></article>
+      <article class="card"><span class="tag">CHICKEN</span><h3>Full Chicken + Large Chips + 6 Pecka Buns</h3><div class="price">R100</div></article>
+      <article class="card"><span class="tag">CHICKEN</span><h3>Quarter Chicken + Chips</h3><div class="price">R45</div></article>
+      <article class="card"><span class="tag">CHICKEN</span><h3>Half Chicken + Medium Chips</h3><div class="price">R70</div></article>
+      <article class="card"><span class="tag">CHIPS</span><h3>Large Chips</h3><div class="price">R30</div></article>
+      <article class="card"><span class="tag">CHIPS</span><h3>Extra-Large Chips</h3><div class="price">R50</div></article>
+    </div>
+  </section>
+
+  <section class="section" id="order">
+    <div class="order-box">
+      <h2>Ready to Order? 📲</h2>
+      <p>Send us your order on WhatsApp. Tell us what you'd like and where you need it delivered.</p>
+      <a class="btn whatsapp" href="https://wa.me/27715382395?text=Hi%20QzzCityRestaurant%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">💬 ORDER NOW ON WHATSAPP</a>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <h2>Find QzzCityRestaurant</h2>
+    <p class="sub">Serving customers around Hammarsdale, Mpumalanga Unit 3.</p>
+    <div class="info">
+      <div><strong>📍 Location</strong>Hammarsdale, Mpumalanga Unit 3</div>
+      <div><strong>🚚 Delivery</strong>Free delivery</div>
+      <div><strong>📱 WhatsApp</strong>071 538 2395</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-brand">QzzCityRestaurant</div>
+  <div>The Burger Man is ready for you.</div>
+  <div>© 2026 QzzCityRestaurant. All rights reserved.</div>
+</footer>
+</body>
+</html>
