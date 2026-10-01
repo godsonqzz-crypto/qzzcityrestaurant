@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>QzzCityRestaurant Admin</title>
+  <meta name="description" content="QzzCityRestaurant — Burgers, chicken and chips in Hammarsdale. Free delivery. Order on WhatsApp.">
+
+  <title>QzzCityRestaurant | Burgers, Chicken & Chips</title>
 
   <style>
     :root{
@@ -12,17 +14,17 @@
       --black:#111;
       --white:#fff;
       --gray:#f4f4f4;
-      --green:#25d366;
+      --green:#20b15a;
       --red:#d93025;
-      --blue:#2563eb;
     }
 
     *{
       box-sizing:border-box;
+      margin:0;
+      padding:0;
     }
 
     body{
-      margin:0;
       font-family:Arial,Helvetica,sans-serif;
       background:var(--gray);
       color:var(--black);
@@ -31,189 +33,158 @@
     header{
       background:var(--black);
       color:white;
-      padding:20px;
+      padding:25px 15px;
       text-align:center;
-      border-bottom:5px solid var(--yellow);
+      border-bottom:6px solid var(--yellow);
     }
 
     header h1{
-      margin:0;
       color:var(--yellow);
+      font-size:34px;
+      margin-bottom:8px;
     }
 
     header p{
-      margin:6px 0 0;
-      color:#ddd;
-    }
-
-    .container{
-      max-width:1000px;
-      margin:auto;
-      padding:25px 16px 50px;
-    }
-
-    .panel{
-      background:white;
-      padding:22px;
-      border-radius:16px;
-      margin-bottom:22px;
-      box-shadow:0 4px 18px #00000012;
-    }
-
-    .panel h2{
-      margin-top:0;
-    }
-
-    .login-box{
-      max-width:500px;
-      margin:45px auto;
-    }
-
-    label{
-      display:block;
-      font-weight:bold;
-      margin:12px 0 6px;
-    }
-
-    input,
-    select,
-    textarea{
-      width:100%;
-      padding:12px;
-      border:1px solid #ccc;
-      border-radius:9px;
       font-size:16px;
     }
 
-    textarea{
-      min-height:90px;
-      resize:vertical;
-    }
-
-    button{
-      border:0;
-      border-radius:9px;
-      padding:12px 18px;
-      font-weight:bold;
-      cursor:pointer;
-      font-size:15px;
-      margin-top:12px;
-    }
-
-    .primary{
+    .hero{
       background:var(--yellow);
-      color:#111;
+      text-align:center;
+      padding:30px 15px;
     }
 
-    .green{
+    .hero h2{
+      font-size:28px;
+      margin-bottom:10px;
+    }
+
+    .hero p{
+      font-size:17px;
+      margin-bottom:18px;
+    }
+
+    .order-btn{
+      display:inline-block;
       background:var(--green);
       color:white;
-    }
-
-    .red{
-      background:var(--red);
-      color:white;
-    }
-
-    .blue{
-      background:var(--blue);
-      color:white;
-    }
-
-    .gray{
-      background:#ddd;
-      color:#111;
-    }
-
-    .logout{
-      background:var(--red);
-      color:white;
-      float:right;
-      margin-top:-8px;
-    }
-
-    .status{
-      padding:12px;
-      border-radius:9px;
-      margin-bottom:15px;
-      display:none;
+      padding:14px 22px;
+      border-radius:8px;
+      text-decoration:none;
       font-weight:bold;
+      font-size:18px;
     }
 
-    .status.success{
-      display:block;
-      background:#d9f7df;
-      color:#146c2e;
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:25px 15px;
     }
 
-    .status.error{
-      display:block;
-      background:#ffe0e0;
-      color:#8a1111;
-    }
-
-    .menu-item{
-      border:1px solid #ddd;
-      border-radius:12px;
-      padding:16px;
-      margin-bottom:12px;
-    }
-
-    .menu-item h3{
-      margin:0 0 5px;
-    }
-
-    .menu-item small{
-      color:#666;
-    }
-
-    .menu-actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .available{
-      color:#168238;
-      font-weight:bold;
-    }
-
-    .unavailable{
-      color:#b42318;
-      font-weight:bold;
-    }
-
-    .note{
-      background:#fff8d6;
-      padding:14px;
-      border-radius:10px;
-      margin-bottom:18px;
-      font-size:14px;
-    }
-
-    .user-info{
-      background:#222;
-      color:white;
-      padding:10px 15px;
-      border-radius:9px;
+    .section-title{
+      text-align:center;
+      font-size:28px;
       margin-bottom:20px;
     }
 
-    .hidden{
-      display:none !important;
+    #menu{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:18px;
     }
 
-    @media(max-width:600px){
+    .menu-card{
+      background:white;
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 3px 12px rgba(0,0,0,.12);
+      position:relative;
+    }
 
-      .menu-actions button{
-        width:100%;
-      }
+    .menu-card h3{
+      font-size:21px;
+      margin-bottom:8px;
+    }
 
-      .logout{
-        float:none;
-        width:100%;
-      }
+    .category{
+      font-size:13px;
+      color:#666;
+      text-transform:uppercase;
+      margin-bottom:10px;
+    }
 
+    .price{
+      font-size:25px;
+      font-weight:bold;
+      margin-bottom:12px;
+    }
+
+    .description{
+      color:#555;
+      margin-bottom:15px;
+      line-height:1.4;
+    }
+
+    .available{
+      color:var(--green);
+      font-weight:bold;
+      margin-bottom:12px;
+    }
+
+    .unavailable{
+      color:var(--red);
+      font-weight:bold;
+      margin-bottom:12px;
+    }
+
+    .whatsapp-btn{
+      display:block;
+      text-align:center;
+      background:var(--green);
+      color:white;
+      padding:12px;
+      border-radius:7px;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
+    .business{
+      background:white;
+      margin-top:30px;
+      padding:25px;
+      border-radius:12px;
+      box-shadow:0 3px 12px rgba(0,0,0,.1);
+      text-align:center;
+    }
+
+    .business p{
+      margin:9px 0;
+      font-size:17px;
+    }
+
+    .loading{
+      text-align:center;
+      padding:30px;
+      font-size:18px;
+    }
+
+    .empty{
+      text-align:center;
+      padding:30px;
+      background:white;
+      border-radius:10px;
+    }
+
+    footer{
+      background:var(--black);
+      color:white;
+      text-align:center;
+      padding:25px 15px;
+      margin-top:30px;
+    }
+
+    footer strong{
+      color:var(--yellow);
     }
   </style>
 </head>
@@ -221,258 +192,83 @@
 <body>
 
 <header>
-
-  <h1>QzzCityRestaurant</h1>
-
-  <p>Admin Panel • Menu Management</p>
-
+  <h1 id="businessName">QzzCityRestaurant</h1>
+  <p>Burgers • Chicken • Chips</p>
 </header>
 
+<section class="hero">
+  <h2>🔥 Delicious Food. Great Prices.</h2>
+  <p id="deliveryText">Free delivery in our local area!</p>
 
-<!-- LOGIN -->
+  <a
+    id="heroWhatsApp"
+    class="order-btn"
+    href="https://wa.me/27715382395"
+    target="_blank">
+    📲 ORDER ON WHATSAPP
+  </a>
+</section>
 
-<div id="login-section" class="container">
+<main class="container">
 
-  <div class="panel login-box">
+  <h2 class="section-title">🍔 Our Menu</h2>
 
-    <h2>🔐 Admin Login</h2>
-
-    <p>
-      Sign in to manage QzzCityRestaurant.
-    </p>
-
-    <div id="login-status" class="status"></div>
-
-    <label for="login-email">
-      Email
-    </label>
-
-    <input
-      id="login-email"
-      type="email"
-      placeholder="Your admin email"
-      autocomplete="email"
-    >
-
-    <label for="login-password">
-      Password
-    </label>
-
-    <input
-      id="login-password"
-      type="password"
-      placeholder="Your password"
-      autocomplete="current-password"
-    >
-
-    <button
-      class="primary"
-      onclick="login()">
-      🔐 LOGIN
-    </button>
-
+  <div id="menu">
+    <div class="loading">
+      Loading our menu...
+    </div>
   </div>
 
-</div>
-
-
-<!-- ADMIN -->
-
-<div
-  id="admin-section"
-  class="container hidden">
-
-  <div id="status" class="status"></div>
-
-  <div class="user-info">
-
-    <button
-      class="logout"
-      onclick="logout()">
-      🚪 LOG OUT
-    </button>
-
-    <strong>
-      Logged in as:
-    </strong>
-
-    <span id="user-email">
-      Admin
-    </span>
-
-    <div style="clear:both;"></div>
-
-  </div>
-
-
-  <!-- ADD MENU -->
-
-  <section class="panel">
-
-    <h2>➕ Add Menu Item</h2>
-
-    <div class="note">
-      Add a new food item. It will be stored in Supabase and can appear on the customer website.
-    </div>
-
-    <label for="item-name">
-      Food Name
-    </label>
-
-    <input
-      id="item-name"
-      type="text"
-      placeholder="Example: Cheese Burger"
-    >
-
-    <label for="item-category">
-      Category
-    </label>
-
-    <select id="item-category">
-
-      <option value="COMBO">
-        COMBO
-      </option>
-
-      <option value="BURGER">
-        BURGER
-      </option>
-
-      <option value="CHICKEN">
-        CHICKEN
-      </option>
-
-      <option value="CHIPS">
-        CHIPS
-      </option>
-
-      <option value="OTHER">
-        OTHER
-      </option>
-
-    </select>
-
-    <label for="item-price">
-      Price (R)
-    </label>
-
-    <input
-      id="item-price"
-      type="number"
-      step="0.01"
-      placeholder="30"
-    >
-
-    <label for="item-description">
-      Description
-    </label>
-
-    <textarea
-      id="item-description"
-      placeholder="Optional description">
-    </textarea>
-
-    <button
-      class="primary"
-      onclick="addMenuItem()">
-      ➕ ADD MENU ITEM
-    </button>
-
-  </section>
-
-
-  <!-- MENU -->
-
-  <section class="panel">
-
-    <h2>🍔 Current Menu</h2>
-
-    <div id="menu-list">
-      Loading menu...
-    </div>
-
-  </section>
-
-
-  <!-- BUSINESS SETTINGS -->
-
-  <section class="panel">
+  <div class="business">
 
     <h2>📍 Business Information</h2>
 
-    <label for="business-name">
-      Business Name
-    </label>
-
-    <input
-      id="business-name"
-      type="text"
-    >
-
-    <label for="business-location">
-      Location
-    </label>
-
-    <input
-      id="business-location"
-      type="text"
-    >
-
-    <label for="business-whatsapp">
-      WhatsApp Number
-    </label>
-
-    <input
-      id="business-whatsapp"
-      type="text"
-    >
-
-    <label for="business-delivery">
-      Delivery Information
-    </label>
-
-    <input
-      id="business-delivery"
-      type="text"
-    >
-
-    <button
-      class="primary"
-      onclick="saveBusinessSettings()">
-      💾 SAVE BUSINESS INFORMATION
-    </button>
-
-  </section>
-
-
-  <!-- WEBSITE -->
-
-  <section class="panel">
-
-    <h2>🌐 Customer Website</h2>
-
     <p>
-      Open your public QzzCityRestaurant website.
+      <strong>📍 Location:</strong>
+      <span id="businessLocation">Hammarsdale, Mpumalanga Unit 3</span>
     </p>
 
+    <p>
+      <strong>📱 WhatsApp:</strong>
+      <span id="businessPhone">071 538 2395</span>
+    </p>
+
+    <p>
+      <strong>🚚 Delivery:</strong>
+      <span id="businessDelivery">Delivery is Free!!</span>
+    </p>
+
+    <br>
+
     <a
-      href="https://godsonqzz-crypto.github.io/qzzcityrestaurant/"
-      target="_blank"
-      rel="noopener">
-
-      <button class="green">
-        🌐 OPEN CUSTOMER WEBSITE
-      </button>
-
+      id="businessWhatsApp"
+      class="order-btn"
+      href="https://wa.me/27715382395"
+      target="_blank">
+      📲 CONTACT US
     </a>
 
-  </section>
+  </div>
 
-</div>
+</main>
+
+<footer>
+  <p>
+    © 2026 <strong>QzzCityRestaurant</strong>
+  </p>
+  <p>
+    The Burger Man at Your Door 🍔🔥
+  </p>
+</footer>
 
 
 <script>
+
+  /*
+   * ==========================================
+   * QZZCITYRESTAURANT SUPABASE CONNECTION
+   * ==========================================
+   */
 
   const SUPABASE_URL =
     "https://namhbnphcrxjmgkbtqgs.supabase.co";
@@ -481,383 +277,263 @@
     "sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
 
 
-  let accessToken = null;
+  /*
+   * ==========================================
+   * DEFAULT BUSINESS INFORMATION
+   * ==========================================
+   */
+
+  let businessName = "QzzCityRestaurant";
+  let businessLocation = "Hammarsdale, Mpumalanga Unit 3";
+  let businessPhone = "071 538 2395";
+  let businessDelivery = "Delivery is Free!!";
 
 
-  function showLoginStatus(message,type){
+  /*
+   * ==========================================
+   * CONVERT PHONE NUMBER FOR WHATSAPP
+   * ==========================================
+   */
 
-    const box =
-      document.getElementById("login-status");
+  function whatsappNumber(phone){
 
-    box.textContent = message;
+    let number = String(phone || "")
+      .replace(/\D/g,"");
 
-    box.className =
-      "status " + type;
-
-  }
-
-
-  function showStatus(message,type){
-
-    const box =
-      document.getElementById("status");
-
-    box.textContent = message;
-
-    box.className =
-      "status " + type;
-
-    window.scrollTo({
-      top:0,
-      behavior:"smooth"
-    });
-
-  }
-
-
-  async function login(){
-
-    const email =
-      document
-      .getElementById("login-email")
-      .value
-      .trim();
-
-    const password =
-      document
-      .getElementById("login-password")
-      .value;
-
-
-    if(!email || !password){
-
-      showLoginStatus(
-        "Please enter your email and password.",
-        "error"
-      );
-
-      return;
-
+    if(number.startsWith("0")){
+      number = "27" + number.substring(1);
     }
 
+    return number;
+  }
+
+
+  /*
+   * ==========================================
+   * LOAD BUSINESS INFORMATION
+   * ==========================================
+   */
+
+  async function loadBusinessInformation(){
 
     try{
 
-      const response =
-        await fetch(
-          SUPABASE_URL +
-          "/auth/v1/token?grant_type=password",
-          {
-            method:"POST",
-
-            headers:{
-              "Content-Type":"application/json",
-              "apikey":
-                SUPABASE_PUBLISHABLE_KEY
-            },
-
-            body:JSON.stringify({
-              email:email,
-              password:password
-            })
+      const response = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/business_settings?select=*",
+        {
+          headers:{
+            "apikey":SUPABASE_PUBLISHABLE_KEY,
+            "Authorization":
+              "Bearer " + SUPABASE_PUBLISHABLE_KEY
           }
-        );
-
-
-      const data =
-        await response.json();
-
+        }
+      );
 
       if(!response.ok){
-
-        throw new Error(
-          data.error_description ||
-          data.msg ||
-          "Login failed."
-        );
-
+        throw new Error("Business information could not be loaded.");
       }
 
+      const data = await response.json();
 
-      accessToken =
-        data.access_token;
+      if(data.length > 0){
 
+        const info = data[0];
 
-      sessionStorage.setItem(
-        "qzzcity_access_token",
-        accessToken
-      );
+        businessName =
+          info.business_name ||
+          businessName;
 
+        businessLocation =
+          info.location ||
+          businessLocation;
 
-      sessionStorage.setItem(
-        "qzzcity_user_email",
-        email
-      );
+        businessPhone =
+          info.whatsapp_number ||
+          businessPhone;
 
-
-      showAdmin();
-
+        businessDelivery =
+          info.delivery_information ||
+          businessDelivery;
+      }
 
     }catch(error){
 
-      console.error(error);
-
-      showLoginStatus(
-        error.message,
-        "error"
+      console.log(
+        "Using default business information:",
+        error
       );
-
-    }
-
-  }
-
-
-  function showAdmin(){
-
-    document
-      .getElementById("login-section")
-      .classList.add("hidden");
-
-    document
-      .getElementById("admin-section")
-      .classList.remove("hidden");
-
-
-    document
-      .getElementById("user-email")
-      .textContent =
-      sessionStorage.getItem(
-        "qzzcity_user_email"
-      ) || "Admin";
-
-
-    loadMenu();
-
-    loadBusinessSettings();
-
-  }
-
-
-  function logout(){
-
-    accessToken = null;
-
-    sessionStorage.removeItem(
-      "qzzcity_access_token"
-    );
-
-    sessionStorage.removeItem(
-      "qzzcity_user_email"
-    );
-
-
-    document
-      .getElementById("admin-section")
-      .classList.add("hidden");
-
-    document
-      .getElementById("login-section")
-      .classList.remove("hidden");
-
-  }
-
-
-  async function supabaseRequest(
-    endpoint,
-    options={}
-  ){
-
-    const token =
-      accessToken ||
-      sessionStorage.getItem(
-        "qzzcity_access_token"
-      );
-
-
-    if(!token){
-
-      throw new Error(
-        "Please log in again."
-      );
-
     }
 
 
-    const response =
-      await fetch(
-        SUPABASE_URL + endpoint,
+    document.getElementById("businessName").textContent =
+      businessName;
+
+    document.getElementById("businessLocation").textContent =
+      businessLocation;
+
+    document.getElementById("businessPhone").textContent =
+      businessPhone;
+
+    document.getElementById("businessDelivery").textContent =
+      businessDelivery;
+
+    document.getElementById("deliveryText").textContent =
+      businessDelivery;
+
+
+    const wa =
+      "https://wa.me/" +
+      whatsappNumber(businessPhone);
+
+    document.getElementById("heroWhatsApp").href = wa;
+    document.getElementById("businessWhatsApp").href = wa;
+  }
+
+
+  /*
+   * ==========================================
+   * LOAD MENU FROM SUPABASE
+   * ==========================================
+   */
+
+  async function loadMenu(){
+
+    const menuContainer =
+      document.getElementById("menu");
+
+    try{
+
+      const response = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/menu_items?select=*&order=id.asc",
         {
-          ...options,
-
           headers:{
-            "Content-Type":
-              "application/json",
-
-            "apikey":
-              SUPABASE_PUBLISHABLE_KEY,
-
+            "apikey":SUPABASE_PUBLISHABLE_KEY,
             "Authorization":
-              "Bearer " + token,
-
-            ...(options.headers || {})
+              "Bearer " + SUPABASE_PUBLISHABLE_KEY
           }
         }
       );
 
 
-    const text =
-      await response.text();
-
-
-    let data = null;
-
-
-    try{
-
-      data =
-        text
-        ? JSON.parse(text)
-        : null;
-
-    }catch{
-
-      data = text;
-
-    }
-
-
-    if(!response.ok){
-
-      throw new Error(
-        data?.message ||
-        data?.hint ||
-        data?.error ||
-        "Supabase request failed."
-      );
-
-    }
-
-
-    return data;
-
-  }
-
-
-  async function loadMenu(){
-
-    const menuList =
-      document.getElementById(
-        "menu-list"
-      );
-
-
-    menuList.innerHTML =
-      "Loading menu...";
-
-
-    try{
-
-      const items =
-        await supabaseRequest(
-          "/rest/v1/menu_items?select=*&order=id.asc"
-        );
-
-
-      if(!items || items.length===0){
-
-        menuList.innerHTML =
-          "<p>No menu items found.</p>";
-
-        return;
-
+      if(!response.ok){
+        throw new Error("Menu could not be loaded.");
       }
 
 
-      menuList.innerHTML = "";
+      const items = await response.json();
 
 
-      items.forEach(item=>{
+      if(!items.length){
 
-        const box =
-          document.createElement(
-            "div"
+        menuContainer.innerHTML = `
+          <div class="empty">
+            <h3>Our menu is being updated.</h3>
+            <p>Please contact us on WhatsApp.</p>
+          </div>
+        `;
+
+        return;
+      }
+
+
+      menuContainer.innerHTML = "";
+
+
+      items.forEach(item => {
+
+        const available =
+          item.available === true ||
+          item.is_available === true;
+
+
+        const name =
+          item.name ||
+          item.food_name ||
+          "Menu Item";
+
+
+        const category =
+          item.category ||
+          "Food";
+
+
+        const price =
+          item.price !== undefined &&
+          item.price !== null
+            ? Number(item.price).toFixed(0)
+            : "0";
+
+
+        const description =
+          item.description ||
+          "";
+
+
+        const card =
+          document.createElement("div");
+
+        card.className = "menu-card";
+
+
+        let whatsappLink =
+          "https://wa.me/" +
+          whatsappNumber(businessPhone) +
+          "?text=" +
+          encodeURIComponent(
+            "Hi QzzCityRestaurant! I would like to order: " +
+            name +
+            " - R" +
+            price
           );
 
 
-        box.className =
-          "menu-item";
+        card.innerHTML = `
 
+          <h3>${escapeHTML(name)}</h3>
 
-        const availability =
-          item.available
-
-          ? '<span class="available">● AVAILABLE</span>'
-
-          : '<span class="unavailable">● UNAVAILABLE</span>';
-
-
-        box.innerHTML = `
-
-          <h3>
-            ${escapeHtml(item.name)}
-          </h3>
-
-          <small>
-            ${escapeHtml(item.category)}
-            • R${Number(item.price).toFixed(0)}
-          </small>
-
-          <p>
-            ${availability}
-          </p>
-
-          <div class="menu-actions">
-
-            <button
-              class="primary"
-              onclick="editPrice(
-                ${item.id},
-                ${Number(item.price)}
-              )">
-
-              💰 CHANGE PRICE
-
-            </button>
-
-
-            <button
-              class="green"
-              onclick="toggleAvailability(
-                ${item.id},
-                ${item.available}
-              )">
-
-              ${
-                item.available
-                ? "🔴 MARK UNAVAILABLE"
-                : "🟢 MARK AVAILABLE"
-              }
-
-            </button>
-
-
-            <button
-              class="red"
-              onclick="deleteMenuItem(
-                ${item.id},
-                '${escapeJs(item.name)}'
-              )">
-
-              🗑️ DELETE
-
-            </button>
-
+          <div class="category">
+            ${escapeHTML(category)}
           </div>
+
+          <div class="price">
+            R${price}
+          </div>
+
+          ${
+            description
+              ? `<div class="description">
+                  ${escapeHTML(description)}
+                 </div>`
+              : ""
+          }
+
+          ${
+            available
+              ? `
+                <div class="available">
+                  🟢 AVAILABLE
+                </div>
+
+                <a
+                  class="whatsapp-btn"
+                  href="${whatsappLink}"
+                  target="_blank">
+                  📲 ORDER THIS ITEM
+                </a>
+              `
+              : `
+                <div class="unavailable">
+                  🔴 CURRENTLY UNAVAILABLE
+                </div>
+              `
+          }
 
         `;
 
 
-        menuList.appendChild(box);
+        menuContainer.appendChild(card);
 
       });
 
@@ -866,574 +542,68 @@
 
       console.error(error);
 
-      menuList.innerHTML =
-        "<p>Could not load menu.</p>";
 
+      menuContainer.innerHTML = `
 
-      showStatus(
-        "Error loading menu: " +
-        error.message,
-        "error"
-      );
+        <div class="empty">
 
-    }
+          <h3>🍔 QzzCityRestaurant</h3>
 
-  }
+          <p>
+            We are currently updating our menu.
+          </p>
 
+          <br>
 
-  async function addMenuItem(){
+          <a
+            class="order-btn"
+            href="https://wa.me/27715382395"
+            target="_blank">
+            📲 ORDER ON WHATSAPP
+          </a>
 
-    const name =
-      document
-      .getElementById("item-name")
-      .value
-      .trim();
+        </div>
 
-
-    const category =
-      document
-      .getElementById("item-category")
-      .value;
-
-
-    const price =
-      document
-      .getElementById("item-price")
-      .value;
-
-
-    const description =
-      document
-      .getElementById("item-description")
-      .value
-      .trim();
-
-
-    if(!name || !price){
-
-      showStatus(
-        "Please enter the food name and price.",
-        "error"
-      );
-
-      return;
+      `;
 
     }
-
-
-    try{
-
-      await supabaseRequest(
-        "/rest/v1/menu_items",
-        {
-          method:"POST",
-
-          headers:{
-            "Prefer":
-              "return=minimal"
-          },
-
-          body:JSON.stringify({
-
-            name:name,
-
-            category:category,
-
-            price:Number(price),
-
-            description:
-              description || null,
-
-            available:true
-
-          })
-
-        }
-      );
-
-
-      document
-        .getElementById("item-name")
-        .value="";
-
-
-      document
-        .getElementById("item-price")
-        .value="";
-
-
-      document
-        .getElementById("item-description")
-        .value="";
-
-
-      showStatus(
-        "Menu item added successfully! ✅",
-        "success"
-      );
-
-
-      loadMenu();
-
-
-    }catch(error){
-
-      showStatus(
-        "Could not add item: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  async function editPrice(
-    id,
-    currentPrice
-  ){
-
-    const newPrice =
-      prompt(
-        "Enter the new price:",
-        currentPrice
-      );
-
-
-    if(newPrice===null) return;
-
-
-    const price =
-      Number(newPrice);
-
-
-    if(isNaN(price) || price<0){
-
-      showStatus(
-        "Please enter a valid price.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    try{
-
-      await supabaseRequest(
-        "/rest/v1/menu_items?id=eq." + id,
-        {
-          method:"PATCH",
-
-          headers:{
-            "Prefer":
-              "return=minimal"
-          },
-
-          body:JSON.stringify({
-            price:price
-          })
-
-        }
-      );
-
-
-      showStatus(
-        "Price updated successfully! 💰✅",
-        "success"
-      );
-
-
-      loadMenu();
-
-
-    }catch(error){
-
-      showStatus(
-        "Could not update price: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  async function toggleAvailability(
-    id,
-    currentStatus
-  ){
-
-    try{
-
-      await supabaseRequest(
-        "/rest/v1/menu_items?id=eq." + id,
-        {
-          method:"PATCH",
-
-          headers:{
-            "Prefer":
-              "return=minimal"
-          },
-
-          body:JSON.stringify({
-            available:
-              !currentStatus
-          })
-
-        }
-      );
-
-
-      showStatus(
-        "Menu availability updated! ✅",
-        "success"
-      );
-
-
-      loadMenu();
-
-
-    }catch(error){
-
-      showStatus(
-        "Could not update availability: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  async function deleteMenuItem(
-    id,
-    name
-  ){
-
-    const confirmed =
-      confirm(
-        "Delete " +
-        name +
-        " from the menu?"
-      );
-
-
-    if(!confirmed) return;
-
-
-    try{
-
-      await supabaseRequest(
-        "/rest/v1/menu_items?id=eq." + id,
-        {
-          method:"DELETE"
-        }
-      );
-
-
-      showStatus(
-        "Menu item deleted.",
-        "success"
-      );
-
-
-      loadMenu();
-
-
-    }catch(error){
-
-      showStatus(
-        "Could not delete item: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  async function loadBusinessSettings(){
-
-    try{
-
-      const settings =
-        await supabaseRequest(
-          "/rest/v1/business_settings?select=*&limit=1"
-        );
-
-
-      if(
-        !settings ||
-        settings.length===0
-      ){
-
-        return;
-
-      }
-
-
-      const business =
-        settings[0];
-
-
-      document
-        .getElementById(
-          "business-name"
-        )
-        .value =
-        business.business_name || "";
-
-
-      document
-        .getElementById(
-          "business-location"
-        )
-        .value =
-        business.location || "";
-
-
-      document
-        .getElementById(
-          "business-whatsapp"
-        )
-        .value =
-        business.whatsapp || "";
-
-
-      document
-        .getElementById(
-          "business-delivery"
-        )
-        .value =
-        business.delivery_info || "";
-
-
-    }catch(error){
-
-      showStatus(
-        "Could not load business information: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  async function saveBusinessSettings(){
-
-    const businessName =
-      document
-      .getElementById(
-        "business-name"
-      )
-      .value
-      .trim();
-
-
-    const location =
-      document
-      .getElementById(
-        "business-location"
-      )
-      .value
-      .trim();
-
-
-    const whatsapp =
-      document
-      .getElementById(
-        "business-whatsapp"
-      )
-      .value
-      .trim();
-
-
-    const delivery =
-      document
-      .getElementById(
-        "business-delivery"
-      )
-      .value
-      .trim();
-
-
-    if(!businessName){
-
-      showStatus(
-        "Business name is required.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    try{
-
-      const existing =
-        await supabaseRequest(
-          "/rest/v1/business_settings?select=id&limit=1"
-        );
-
-
-      const data={
-
-        business_name:
-          businessName,
-
-        location:
-          location,
-
-        whatsapp:
-          whatsapp,
-
-        delivery_info:
-          delivery,
-
-        updated_at:
-          new Date().toISOString()
-
-      };
-
-
-      if(
-        existing &&
-        existing.length>0
-      ){
-
-        await supabaseRequest(
-          "/rest/v1/business_settings?id=eq." +
-          existing[0].id,
-          {
-            method:"PATCH",
-
-            headers:{
-              "Prefer":
-                "return=minimal"
-            },
-
-            body:
-              JSON.stringify(data)
-          }
-        );
-
-      }else{
-
-        await supabaseRequest(
-          "/rest/v1/business_settings",
-          {
-            method:"POST",
-
-            headers:{
-              "Prefer":
-                "return=minimal"
-            },
-
-            body:
-              JSON.stringify(data)
-          }
-        );
-
-      }
-
-
-      showStatus(
-        "Business information saved! ✅",
-        "success"
-      );
-
-
-    }catch(error){
-
-      showStatus(
-        "Could not save business information: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  function escapeHtml(value){
-
-    return String(value)
-
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-
-      .replace(
-        /</g,
-        "&lt;"
-      )
-
-      .replace(
-        />/g,
-        "&gt;"
-      )
-
-      .replace(
-        /"/g,
-        "&quot;"
-      )
-
-      .replace(
-        /'/g,
-        "&#039;"
-      );
-
-  }
-
-
-  function escapeJs(value){
-
-    return String(value)
-
-      .replace(
-        /\\/g,
-        "\\\\"
-      )
-
-      .replace(
-        /'/g,
-        "\\'"
-      )
-
-      .replace(
-        /"/g,
-        "&quot;"
-      );
 
   }
 
 
   /*
-    Restore login session
-  */
+   * ==========================================
+   * SECURITY / TEXT DISPLAY HELPER
+   * ==========================================
+   */
 
-  accessToken =
-    sessionStorage.getItem(
-      "qzzcity_access_token"
-    );
+  function escapeHTML(value){
+
+    return String(value)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
 
 
-  if(accessToken){
+  /*
+   * ==========================================
+   * START WEBSITE
+   * ==========================================
+   */
 
-    showAdmin();
+  async function startWebsite(){
+
+    await loadBusinessInformation();
+
+    await loadMenu();
 
   }
+
+
+  startWebsite();
 
 </script>
 
