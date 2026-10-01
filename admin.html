@@ -14,6 +14,7 @@
       --gray:#f4f4f4;
       --green:#25d366;
       --red:#d93025;
+      --blue:#2563eb;
     }
 
     *{
@@ -63,13 +64,20 @@
       margin-top:0;
     }
 
+    .login-box{
+      max-width:500px;
+      margin:45px auto;
+    }
+
     label{
       display:block;
       font-weight:bold;
       margin:12px 0 6px;
     }
 
-    input,select,textarea{
+    input,
+    select,
+    textarea{
       width:100%;
       padding:12px;
       border:1px solid #ccc;
@@ -107,9 +115,21 @@
       color:white;
     }
 
+    .blue{
+      background:var(--blue);
+      color:white;
+    }
+
     .gray{
       background:#ddd;
       color:#111;
+    }
+
+    .logout{
+      background:var(--red);
+      color:white;
+      float:right;
+      margin-top:-8px;
     }
 
     .status{
@@ -163,10 +183,6 @@
       font-weight:bold;
     }
 
-    .danger-zone{
-      border:2px solid #ffd0d0;
-    }
-
     .note{
       background:#fff8d6;
       padding:14px;
@@ -175,10 +191,29 @@
       font-size:14px;
     }
 
+    .user-info{
+      background:#222;
+      color:white;
+      padding:10px 15px;
+      border-radius:9px;
+      margin-bottom:20px;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
     @media(max-width:600px){
+
       .menu-actions button{
         width:100%;
       }
+
+      .logout{
+        float:none;
+        width:100%;
+      }
+
     }
   </style>
 </head>
@@ -186,104 +221,258 @@
 <body>
 
 <header>
+
   <h1>QzzCityRestaurant</h1>
+
   <p>Admin Panel • Menu Management</p>
+
 </header>
 
-<div class="container">
+
+<!-- LOGIN -->
+
+<div id="login-section" class="container">
+
+  <div class="panel login-box">
+
+    <h2>🔐 Admin Login</h2>
+
+    <p>
+      Sign in to manage QzzCityRestaurant.
+    </p>
+
+    <div id="login-status" class="status"></div>
+
+    <label for="login-email">
+      Email
+    </label>
+
+    <input
+      id="login-email"
+      type="email"
+      placeholder="Your admin email"
+      autocomplete="email"
+    >
+
+    <label for="login-password">
+      Password
+    </label>
+
+    <input
+      id="login-password"
+      type="password"
+      placeholder="Your password"
+      autocomplete="current-password"
+    >
+
+    <button
+      class="primary"
+      onclick="login()">
+      🔐 LOGIN
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ADMIN -->
+
+<div
+  id="admin-section"
+  class="container hidden">
 
   <div id="status" class="status"></div>
 
+  <div class="user-info">
+
+    <button
+      class="logout"
+      onclick="logout()">
+      🚪 LOG OUT
+    </button>
+
+    <strong>
+      Logged in as:
+    </strong>
+
+    <span id="user-email">
+      Admin
+    </span>
+
+    <div style="clear:both;"></div>
+
+  </div>
+
+
+  <!-- ADD MENU -->
+
   <section class="panel">
+
     <h2>➕ Add Menu Item</h2>
 
     <div class="note">
-      Add a new food item here. It will be stored in Supabase and can appear on the customer website.
+      Add a new food item. It will be stored in Supabase and can appear on the customer website.
     </div>
 
-    <label for="item-name">Food Name</label>
-    <input id="item-name" type="text" placeholder="Example: Cheese Burger">
+    <label for="item-name">
+      Food Name
+    </label>
 
-    <label for="item-category">Category</label>
+    <input
+      id="item-name"
+      type="text"
+      placeholder="Example: Cheese Burger"
+    >
+
+    <label for="item-category">
+      Category
+    </label>
+
     <select id="item-category">
-      <option value="COMBO">COMBO</option>
-      <option value="BURGER">BURGER</option>
-      <option value="CHICKEN">CHICKEN</option>
-      <option value="CHIPS">CHIPS</option>
-      <option value="OTHER">OTHER</option>
+
+      <option value="COMBO">
+        COMBO
+      </option>
+
+      <option value="BURGER">
+        BURGER
+      </option>
+
+      <option value="CHICKEN">
+        CHICKEN
+      </option>
+
+      <option value="CHIPS">
+        CHIPS
+      </option>
+
+      <option value="OTHER">
+        OTHER
+      </option>
+
     </select>
 
-    <label for="item-price">Price (R)</label>
-    <input id="item-price" type="number" step="0.01" placeholder="30">
+    <label for="item-price">
+      Price (R)
+    </label>
 
-    <label for="item-description">Description</label>
-    <textarea id="item-description" placeholder="Optional description"></textarea>
+    <input
+      id="item-price"
+      type="number"
+      step="0.01"
+      placeholder="30"
+    >
 
-    <button class="primary" onclick="addMenuItem()">
+    <label for="item-description">
+      Description
+    </label>
+
+    <textarea
+      id="item-description"
+      placeholder="Optional description">
+    </textarea>
+
+    <button
+      class="primary"
+      onclick="addMenuItem()">
       ➕ ADD MENU ITEM
     </button>
+
   </section>
 
 
+  <!-- MENU -->
+
   <section class="panel">
+
     <h2>🍔 Current Menu</h2>
 
     <div id="menu-list">
       Loading menu...
     </div>
+
   </section>
 
 
+  <!-- BUSINESS SETTINGS -->
+
   <section class="panel">
+
     <h2>📍 Business Information</h2>
 
-    <label for="business-name">Business Name</label>
-    <input id="business-name" type="text">
+    <label for="business-name">
+      Business Name
+    </label>
 
-    <label for="business-location">Location</label>
-    <input id="business-location" type="text">
+    <input
+      id="business-name"
+      type="text"
+    >
 
-    <label for="business-whatsapp">WhatsApp Number</label>
-    <input id="business-whatsapp" type="text">
+    <label for="business-location">
+      Location
+    </label>
 
-    <label for="business-delivery">Delivery Information</label>
-    <input id="business-delivery" type="text">
+    <input
+      id="business-location"
+      type="text"
+    >
 
-    <button class="primary" onclick="saveBusinessSettings()">
+    <label for="business-whatsapp">
+      WhatsApp Number
+    </label>
+
+    <input
+      id="business-whatsapp"
+      type="text"
+    >
+
+    <label for="business-delivery">
+      Delivery Information
+    </label>
+
+    <input
+      id="business-delivery"
+      type="text"
+    >
+
+    <button
+      class="primary"
+      onclick="saveBusinessSettings()">
       💾 SAVE BUSINESS INFORMATION
     </button>
+
   </section>
 
 
+  <!-- WEBSITE -->
+
   <section class="panel">
-    <h2>🌐 Website</h2>
+
+    <h2>🌐 Customer Website</h2>
 
     <p>
-      Open your customer website:
+      Open your public QzzCityRestaurant website.
     </p>
 
     <a
       href="https://godsonqzz-crypto.github.io/qzzcityrestaurant/"
-      target="_blank">
+      target="_blank"
+      rel="noopener">
+
       <button class="green">
         🌐 OPEN CUSTOMER WEBSITE
       </button>
+
     </a>
+
   </section>
 
 </div>
 
 
 <script>
-
-  /*
-    QzzCityRestaurant Admin Panel
-
-    IMPORTANT:
-    This uses the PUBLIC/PUBLISHABLE key.
-
-    NEVER put a Supabase secret/service_role key here.
-  */
 
   const SUPABASE_URL =
     "https://namhbnphcrxjmgkbtqgs.supabase.co";
@@ -292,14 +481,30 @@
     "sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
 
 
-  function showStatus(message, type){
+  let accessToken = null;
 
-    const status =
+
+  function showLoginStatus(message,type){
+
+    const box =
+      document.getElementById("login-status");
+
+    box.textContent = message;
+
+    box.className =
+      "status " + type;
+
+  }
+
+
+  function showStatus(message,type){
+
+    const box =
       document.getElementById("status");
 
-    status.textContent = message;
+    box.textContent = message;
 
-    status.className =
+    box.className =
       "status " + type;
 
     window.scrollTo({
@@ -310,30 +515,194 @@
   }
 
 
+  async function login(){
+
+    const email =
+      document
+      .getElementById("login-email")
+      .value
+      .trim();
+
+    const password =
+      document
+      .getElementById("login-password")
+      .value;
+
+
+    if(!email || !password){
+
+      showLoginStatus(
+        "Please enter your email and password.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      const response =
+        await fetch(
+          SUPABASE_URL +
+          "/auth/v1/token?grant_type=password",
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":"application/json",
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY
+            },
+
+            body:JSON.stringify({
+              email:email,
+              password:password
+            })
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if(!response.ok){
+
+        throw new Error(
+          data.error_description ||
+          data.msg ||
+          "Login failed."
+        );
+
+      }
+
+
+      accessToken =
+        data.access_token;
+
+
+      sessionStorage.setItem(
+        "qzzcity_access_token",
+        accessToken
+      );
+
+
+      sessionStorage.setItem(
+        "qzzcity_user_email",
+        email
+      );
+
+
+      showAdmin();
+
+
+    }catch(error){
+
+      console.error(error);
+
+      showLoginStatus(
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  function showAdmin(){
+
+    document
+      .getElementById("login-section")
+      .classList.add("hidden");
+
+    document
+      .getElementById("admin-section")
+      .classList.remove("hidden");
+
+
+    document
+      .getElementById("user-email")
+      .textContent =
+      sessionStorage.getItem(
+        "qzzcity_user_email"
+      ) || "Admin";
+
+
+    loadMenu();
+
+    loadBusinessSettings();
+
+  }
+
+
+  function logout(){
+
+    accessToken = null;
+
+    sessionStorage.removeItem(
+      "qzzcity_access_token"
+    );
+
+    sessionStorage.removeItem(
+      "qzzcity_user_email"
+    );
+
+
+    document
+      .getElementById("admin-section")
+      .classList.add("hidden");
+
+    document
+      .getElementById("login-section")
+      .classList.remove("hidden");
+
+  }
+
+
   async function supabaseRequest(
     endpoint,
-    options = {}
+    options={}
   ){
 
-    const response = await fetch(
-      SUPABASE_URL + endpoint,
-      {
-        ...options,
+    const token =
+      accessToken ||
+      sessionStorage.getItem(
+        "qzzcity_access_token"
+      );
 
-        headers:{
-          "Content-Type":"application/json",
 
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
+    if(!token){
 
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY,
+      throw new Error(
+        "Please log in again."
+      );
 
-          ...(options.headers || {})
+    }
+
+
+    const response =
+      await fetch(
+        SUPABASE_URL + endpoint,
+        {
+          ...options,
+
+          headers:{
+            "Content-Type":
+              "application/json",
+
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " + token,
+
+            ...(options.headers || {})
+          }
         }
-      }
-    );
+      );
 
 
     const text =
@@ -344,9 +713,16 @@
 
 
     try{
-      data = text ? JSON.parse(text) : null;
+
+      data =
+        text
+        ? JSON.parse(text)
+        : null;
+
     }catch{
+
       data = text;
+
     }
 
 
@@ -355,6 +731,7 @@
       throw new Error(
         data?.message ||
         data?.hint ||
+        data?.error ||
         "Supabase request failed."
       );
 
@@ -369,7 +746,10 @@
   async function loadMenu(){
 
     const menuList =
-      document.getElementById("menu-list");
+      document.getElementById(
+        "menu-list"
+      );
+
 
     menuList.innerHTML =
       "Loading menu...";
@@ -383,7 +763,7 @@
         );
 
 
-      if(!items || items.length === 0){
+      if(!items || items.length===0){
 
         menuList.innerHTML =
           "<p>No menu items found.</p>";
@@ -396,10 +776,13 @@
       menuList.innerHTML = "";
 
 
-      items.forEach(item => {
+      items.forEach(item=>{
 
         const box =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
+
 
         box.className =
           "menu-item";
@@ -407,39 +790,66 @@
 
         const availability =
           item.available
+
           ? '<span class="available">● AVAILABLE</span>'
+
           : '<span class="unavailable">● UNAVAILABLE</span>';
 
 
         box.innerHTML = `
 
-          <h3>${escapeHtml(item.name)}</h3>
+          <h3>
+            ${escapeHtml(item.name)}
+          </h3>
 
           <small>
             ${escapeHtml(item.category)}
             • R${Number(item.price).toFixed(0)}
           </small>
 
-          <p>${availability}</p>
+          <p>
+            ${availability}
+          </p>
 
           <div class="menu-actions">
 
             <button
               class="primary"
-              onclick="editPrice(${item.id}, ${Number(item.price)})">
+              onclick="editPrice(
+                ${item.id},
+                ${Number(item.price)}
+              )">
+
               💰 CHANGE PRICE
+
             </button>
+
 
             <button
               class="green"
-              onclick="toggleAvailability(${item.id}, ${item.available})">
-              ${item.available ? "🔴 MARK UNAVAILABLE" : "🟢 MARK AVAILABLE"}
+              onclick="toggleAvailability(
+                ${item.id},
+                ${item.available}
+              )">
+
+              ${
+                item.available
+                ? "🔴 MARK UNAVAILABLE"
+                : "🟢 MARK AVAILABLE"
+              }
+
             </button>
+
 
             <button
               class="red"
-              onclick="deleteMenuItem(${item.id}, '${escapeJs(item.name)}')">
+              onclick="deleteMenuItem(
+                ${item.id},
+                '${escapeJs(item.name)}'
+              )">
+
               🗑️ DELETE
+
             </button>
 
           </div>
@@ -459,6 +869,7 @@
       menuList.innerHTML =
         "<p>Could not load menu.</p>";
 
+
       showStatus(
         "Error loading menu: " +
         error.message,
@@ -473,16 +884,29 @@
   async function addMenuItem(){
 
     const name =
-      document.getElementById("item-name").value.trim();
+      document
+      .getElementById("item-name")
+      .value
+      .trim();
+
 
     const category =
-      document.getElementById("item-category").value;
+      document
+      .getElementById("item-category")
+      .value;
+
 
     const price =
-      document.getElementById("item-price").value;
+      document
+      .getElementById("item-price")
+      .value;
+
 
     const description =
-      document.getElementById("item-description").value.trim();
+      document
+      .getElementById("item-description")
+      .value
+      .trim();
 
 
     if(!name || !price){
@@ -505,7 +929,8 @@
           method:"POST",
 
           headers:{
-            "Prefer":"return=minimal"
+            "Prefer":
+              "return=minimal"
           },
 
           body:JSON.stringify({
@@ -527,11 +952,19 @@
       );
 
 
-      document.getElementById("item-name").value = "";
+      document
+        .getElementById("item-name")
+        .value="";
 
-      document.getElementById("item-price").value = "";
 
-      document.getElementById("item-description").value = "";
+      document
+        .getElementById("item-price")
+        .value="";
+
+
+      document
+        .getElementById("item-description")
+        .value="";
 
 
       showStatus(
@@ -556,7 +989,10 @@
   }
 
 
-  async function editPrice(id,currentPrice){
+  async function editPrice(
+    id,
+    currentPrice
+  ){
 
     const newPrice =
       prompt(
@@ -565,14 +1001,14 @@
       );
 
 
-    if(newPrice === null) return;
+    if(newPrice===null) return;
 
 
     const price =
       Number(newPrice);
 
 
-    if(isNaN(price) || price < 0){
+    if(isNaN(price) || price<0){
 
       showStatus(
         "Please enter a valid price.",
@@ -592,7 +1028,8 @@
           method:"PATCH",
 
           headers:{
-            "Prefer":"return=minimal"
+            "Prefer":
+              "return=minimal"
           },
 
           body:JSON.stringify({
@@ -625,7 +1062,10 @@
   }
 
 
-  async function toggleAvailability(id,currentStatus){
+  async function toggleAvailability(
+    id,
+    currentStatus
+  ){
 
     try{
 
@@ -635,11 +1075,13 @@
           method:"PATCH",
 
           headers:{
-            "Prefer":"return=minimal"
+            "Prefer":
+              "return=minimal"
           },
 
           body:JSON.stringify({
-            available:!currentStatus
+            available:
+              !currentStatus
           })
 
         }
@@ -668,7 +1110,10 @@
   }
 
 
-  async function deleteMenuItem(id,name){
+  async function deleteMenuItem(
+    id,
+    name
+  ){
 
     const confirmed =
       confirm(
@@ -723,7 +1168,10 @@
         );
 
 
-      if(!settings || settings.length === 0){
+      if(
+        !settings ||
+        settings.length===0
+      ){
 
         return;
 
@@ -734,16 +1182,35 @@
         settings[0];
 
 
-      document.getElementById("business-name").value =
+      document
+        .getElementById(
+          "business-name"
+        )
+        .value =
         business.business_name || "";
 
-      document.getElementById("business-location").value =
+
+      document
+        .getElementById(
+          "business-location"
+        )
+        .value =
         business.location || "";
 
-      document.getElementById("business-whatsapp").value =
+
+      document
+        .getElementById(
+          "business-whatsapp"
+        )
+        .value =
         business.whatsapp || "";
 
-      document.getElementById("business-delivery").value =
+
+      document
+        .getElementById(
+          "business-delivery"
+        )
+        .value =
         business.delivery_info || "";
 
 
@@ -763,16 +1230,39 @@
   async function saveBusinessSettings(){
 
     const businessName =
-      document.getElementById("business-name").value.trim();
+      document
+      .getElementById(
+        "business-name"
+      )
+      .value
+      .trim();
+
 
     const location =
-      document.getElementById("business-location").value.trim();
+      document
+      .getElementById(
+        "business-location"
+      )
+      .value
+      .trim();
+
 
     const whatsapp =
-      document.getElementById("business-whatsapp").value.trim();
+      document
+      .getElementById(
+        "business-whatsapp"
+      )
+      .value
+      .trim();
+
 
     const delivery =
-      document.getElementById("business-delivery").value.trim();
+      document
+      .getElementById(
+        "business-delivery"
+      )
+      .value
+      .trim();
 
 
     if(!businessName){
@@ -795,7 +1285,7 @@
         );
 
 
-      const data = {
+      const data={
 
         business_name:
           businessName,
@@ -815,7 +1305,10 @@
       };
 
 
-      if(existing && existing.length > 0){
+      if(
+        existing &&
+        existing.length>0
+      ){
 
         await supabaseRequest(
           "/rest/v1/business_settings?id=eq." +
@@ -824,10 +1317,12 @@
             method:"PATCH",
 
             headers:{
-              "Prefer":"return=minimal"
+              "Prefer":
+                "return=minimal"
             },
 
-            body:JSON.stringify(data)
+            body:
+              JSON.stringify(data)
           }
         );
 
@@ -839,10 +1334,12 @@
             method:"POST",
 
             headers:{
-              "Prefer":"return=minimal"
+              "Prefer":
+                "return=minimal"
             },
 
-            body:JSON.stringify(data)
+            body:
+              JSON.stringify(data)
           }
         );
 
@@ -871,11 +1368,31 @@
   function escapeHtml(value){
 
     return String(value)
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;")
-      .replace(/"/g,"&quot;")
-      .replace(/'/g,"&#039;");
+
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
 
   }
 
@@ -883,20 +1400,40 @@
   function escapeJs(value){
 
     return String(value)
-      .replace(/\\/g,"\\\\")
-      .replace(/'/g,"\\'")
-      .replace(/"/g,"&quot;");
+
+      .replace(
+        /\\/g,
+        "\\\\"
+      )
+
+      .replace(
+        /'/g,
+        "\\'"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      );
 
   }
 
 
   /*
-    Load everything when the admin page opens.
+    Restore login session
   */
 
-  loadMenu();
+  accessToken =
+    sessionStorage.getItem(
+      "qzzcity_access_token"
+    );
 
-  loadBusinessSettings();
+
+  if(accessToken){
+
+    showAdmin();
+
+  }
 
 </script>
 
