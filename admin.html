@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>QzzCityRestaurant Admin</title>
+
+  <style>
+    :root{
+      --yellow:#ffd400;
+      --black:#111;
+      --white:#fff;
+      --gray:#f4f4f4;
+      --green:#25d366;
+      --red:#d93025;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:var(--gray);
+      color:var(--black);
+    }
+
+    header{
+      background:var(--black);
+      color:white;
+      padding:20px;
+      text-align:center;
+      border-bottom:5px solid var(--yellow);
+    }
+
+    header h1{
+      margin:0;
+      color:var(--yellow);
+    }
+
+    header p{
+      margin:6px 0 0;
+      color:#ddd;
+    }
+
+    .container{
+      max-width:1000px;
+      margin:auto;
+      padding:25px 16px 50px;
+    }
+
+    .panel{
+      background:white;
+      padding:22px;
+      border-radius:16px;
+      margin-bottom:22px;
+      box-shadow:0 4px 18px #00000012;
+    }
+
+    .panel h2{
+      margin-top:0;
+    }
+
+    label{
+      display:block;
+      font-weight:bold;
+      margin:12px 0 6px;
+    }
+
+    input,select,textarea{
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:9px;
+      font-size:16px;
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    button{
+      border:0;
+      border-radius:9px;
+      padding:12px 18px;
+      font-weight:bold;
+      cursor:pointer;
+      font-size:15px;
+      margin-top:12px;
+    }
+
+    .primary{
+      background:var(--yellow);
+      color:#111;
+    }
+
+    .green{
+      background:var(--green);
+      color:white;
+    }
+
+    .red{
+      background:var(--red);
+      color:white;
+    }
+
+    .gray{
+      background:#ddd;
+      color:#111;
+    }
+
+    .status{
+      padding:12px;
+      border-radius:9px;
+      margin-bottom:15px;
+      display:none;
+      font-weight:bold;
+    }
+
+    .status.success{
+      display:block;
+      background:#d9f7df;
+      color:#146c2e;
+    }
+
+    .status.error{
+      display:block;
+      background:#ffe0e0;
+      color:#8a1111;
+    }
+
+    .menu-item{
+      border:1px solid #ddd;
+      border-radius:12px;
+      padding:16px;
+      margin-bottom:12px;
+    }
+
+    .menu-item h3{
+      margin:0 0 5px;
+    }
+
+    .menu-item small{
+      color:#666;
+    }
+
+    .menu-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .available{
+      color:#168238;
+      font-weight:bold;
+    }
+
+    .unavailable{
+      color:#b42318;
+      font-weight:bold;
+    }
+
+    .danger-zone{
+      border:2px solid #ffd0d0;
+    }
+
+    .note{
+      background:#fff8d6;
+      padding:14px;
+      border-radius:10px;
+      margin-bottom:18px;
+      font-size:14px;
+    }
+
+    @media(max-width:600px){
+      .menu-actions button{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>QzzCityRestaurant</h1>
+  <p>Admin Panel • Menu Management</p>
+</header>
+
+<div class="container">
+
+  <div id="status" class="status"></div>
+
+  <section class="panel">
+    <h2>➕ Add Menu Item</h2>
+
+    <div class="note">
+      Add a new food item here. It will be stored in Supabase and can appear on the customer website.
+    </div>
+
+    <label for="item-name">Food Name</label>
+    <input id="item-name" type="text" placeholder="Example: Cheese Burger">
+
+    <label for="item-category">Category</label>
+    <select id="item-category">
+      <option value="COMBO">COMBO</option>
+      <option value="BURGER">BURGER</option>
+      <option value="CHICKEN">CHICKEN</option>
+      <option value="CHIPS">CHIPS</option>
+      <option value="OTHER">OTHER</option>
+    </select>
+
+    <label for="item-price">Price (R)</label>
+    <input id="item-price" type="number" step="0.01" placeholder="30">
+
+    <label for="item-description">Description</label>
+    <textarea id="item-description" placeholder="Optional description"></textarea>
+
+    <button class="primary" onclick="addMenuItem()">
+      ➕ ADD MENU ITEM
+    </button>
+  </section>
+
+
+  <section class="panel">
+    <h2>🍔 Current Menu</h2>
+
+    <div id="menu-list">
+      Loading menu...
+    </div>
+  </section>
+
+
+  <section class="panel">
+    <h2>📍 Business Information</h2>
+
+    <label for="business-name">Business Name</label>
+    <input id="business-name" type="text">
+
+    <label for="business-location">Location</label>
+    <input id="business-location" type="text">
+
+    <label for="business-whatsapp">WhatsApp Number</label>
+    <input id="business-whatsapp" type="text">
+
+    <label for="business-delivery">Delivery Information</label>
+    <input id="business-delivery" type="text">
+
+    <button class="primary" onclick="saveBusinessSettings()">
+      💾 SAVE BUSINESS INFORMATION
+    </button>
+  </section>
+
+
+  <section class="panel">
+    <h2>🌐 Website</h2>
+
+    <p>
+      Open your customer website:
+    </p>
+
+    <a
+      href="https://godsonqzz-crypto.github.io/qzzcityrestaurant/"
+      target="_blank">
+      <button class="green">
+        🌐 OPEN CUSTOMER WEBSITE
+      </button>
+    </a>
+  </section>
+
+</div>
+
+
+<script>
+
+  /*
+    QzzCityRestaurant Admin Panel
+
+    IMPORTANT:
+    This uses the PUBLIC/PUBLISHABLE key.
+
+    NEVER put a Supabase secret/service_role key here.
+  */
+
+  const SUPABASE_URL =
+    "https://namhbnphcrxjmgkbtqgs.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
+
+
+  function showStatus(message, type){
+
+    const status =
+      document.getElementById("status");
+
+    status.textContent = message;
+
+    status.className =
+      "status " + type;
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+  }
+
+
+  async function supabaseRequest(
+    endpoint,
+    options = {}
+  ){
+
+    const response = await fetch(
+      SUPABASE_URL + endpoint,
+      {
+        ...options,
+
+        headers:{
+          "Content-Type":"application/json",
+
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY,
+
+          ...(options.headers || {})
+        }
+      }
+    );
+
+
+    const text =
+      await response.text();
+
+
+    let data = null;
+
+
+    try{
+      data = text ? JSON.parse(text) : null;
+    }catch{
+      data = text;
+    }
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data?.message ||
+        data?.hint ||
+        "Supabase request failed."
+      );
+
+    }
+
+
+    return data;
+
+  }
+
+
+  async function loadMenu(){
+
+    const menuList =
+      document.getElementById("menu-list");
+
+    menuList.innerHTML =
+      "Loading menu...";
+
+
+    try{
+
+      const items =
+        await supabaseRequest(
+          "/rest/v1/menu_items?select=*&order=id.asc"
+        );
+
+
+      if(!items || items.length === 0){
+
+        menuList.innerHTML =
+          "<p>No menu items found.</p>";
+
+        return;
+
+      }
+
+
+      menuList.innerHTML = "";
+
+
+      items.forEach(item => {
+
+        const box =
+          document.createElement("div");
+
+        box.className =
+          "menu-item";
+
+
+        const availability =
+          item.available
+          ? '<span class="available">● AVAILABLE</span>'
+          : '<span class="unavailable">● UNAVAILABLE</span>';
+
+
+        box.innerHTML = `
+
+          <h3>${escapeHtml(item.name)}</h3>
+
+          <small>
+            ${escapeHtml(item.category)}
+            • R${Number(item.price).toFixed(0)}
+          </small>
+
+          <p>${availability}</p>
+
+          <div class="menu-actions">
+
+            <button
+              class="primary"
+              onclick="editPrice(${item.id}, ${Number(item.price)})">
+              💰 CHANGE PRICE
+            </button>
+
+            <button
+              class="green"
+              onclick="toggleAvailability(${item.id}, ${item.available})">
+              ${item.available ? "🔴 MARK UNAVAILABLE" : "🟢 MARK AVAILABLE"}
+            </button>
+
+            <button
+              class="red"
+              onclick="deleteMenuItem(${item.id}, '${escapeJs(item.name)}')">
+              🗑️ DELETE
+            </button>
+
+          </div>
+
+        `;
+
+
+        menuList.appendChild(box);
+
+      });
+
+
+    }catch(error){
+
+      console.error(error);
+
+      menuList.innerHTML =
+        "<p>Could not load menu.</p>";
+
+      showStatus(
+        "Error loading menu: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  async function addMenuItem(){
+
+    const name =
+      document.getElementById("item-name").value.trim();
+
+    const category =
+      document.getElementById("item-category").value;
+
+    const price =
+      document.getElementById("item-price").value;
+
+    const description =
+      document.getElementById("item-description").value.trim();
+
+
+    if(!name || !price){
+
+      showStatus(
+        "Please enter the food name and price.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      await supabaseRequest(
+        "/rest/v1/menu_items",
+        {
+          method:"POST",
+
+          headers:{
+            "Prefer":"return=minimal"
+          },
+
+          body:JSON.stringify({
+
+            name:name,
+
+            category:category,
+
+            price:Number(price),
+
+            description:
+              description || null,
+
+            available:true
+
+          })
+
+        }
+      );
+
+
+      document.getElementById("item-name").value = "";
+
+      document.getElementById("item-price").value = "";
+
+      document.getElementById("item-description").value = "";
+
+
+      showStatus(
+        "Menu item added successfully! ✅",
+        "success"
+      );
+
+
+      loadMenu();
+
+
+    }catch(error){
+
+      showStatus(
+        "Could not add item: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  async function editPrice(id,currentPrice){
+
+    const newPrice =
+      prompt(
+        "Enter the new price:",
+        currentPrice
+      );
+
+
+    if(newPrice === null) return;
+
+
+    const price =
+      Number(newPrice);
+
+
+    if(isNaN(price) || price < 0){
+
+      showStatus(
+        "Please enter a valid price.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      await supabaseRequest(
+        "/rest/v1/menu_items?id=eq." + id,
+        {
+          method:"PATCH",
+
+          headers:{
+            "Prefer":"return=minimal"
+          },
+
+          body:JSON.stringify({
+            price:price
+          })
+
+        }
+      );
+
+
+      showStatus(
+        "Price updated successfully! 💰✅",
+        "success"
+      );
+
+
+      loadMenu();
+
+
+    }catch(error){
+
+      showStatus(
+        "Could not update price: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  async function toggleAvailability(id,currentStatus){
+
+    try{
+
+      await supabaseRequest(
+        "/rest/v1/menu_items?id=eq." + id,
+        {
+          method:"PATCH",
+
+          headers:{
+            "Prefer":"return=minimal"
+          },
+
+          body:JSON.stringify({
+            available:!currentStatus
+          })
+
+        }
+      );
+
+
+      showStatus(
+        "Menu availability updated! ✅",
+        "success"
+      );
+
+
+      loadMenu();
+
+
+    }catch(error){
+
+      showStatus(
+        "Could not update availability: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  async function deleteMenuItem(id,name){
+
+    const confirmed =
+      confirm(
+        "Delete " +
+        name +
+        " from the menu?"
+      );
+
+
+    if(!confirmed) return;
+
+
+    try{
+
+      await supabaseRequest(
+        "/rest/v1/menu_items?id=eq." + id,
+        {
+          method:"DELETE"
+        }
+      );
+
+
+      showStatus(
+        "Menu item deleted.",
+        "success"
+      );
+
+
+      loadMenu();
+
+
+    }catch(error){
+
+      showStatus(
+        "Could not delete item: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  async function loadBusinessSettings(){
+
+    try{
+
+      const settings =
+        await supabaseRequest(
+          "/rest/v1/business_settings?select=*&limit=1"
+        );
+
+
+      if(!settings || settings.length === 0){
+
+        return;
+
+      }
+
+
+      const business =
+        settings[0];
+
+
+      document.getElementById("business-name").value =
+        business.business_name || "";
+
+      document.getElementById("business-location").value =
+        business.location || "";
+
+      document.getElementById("business-whatsapp").value =
+        business.whatsapp || "";
+
+      document.getElementById("business-delivery").value =
+        business.delivery_info || "";
+
+
+    }catch(error){
+
+      showStatus(
+        "Could not load business information: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  async function saveBusinessSettings(){
+
+    const businessName =
+      document.getElementById("business-name").value.trim();
+
+    const location =
+      document.getElementById("business-location").value.trim();
+
+    const whatsapp =
+      document.getElementById("business-whatsapp").value.trim();
+
+    const delivery =
+      document.getElementById("business-delivery").value.trim();
+
+
+    if(!businessName){
+
+      showStatus(
+        "Business name is required.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      const existing =
+        await supabaseRequest(
+          "/rest/v1/business_settings?select=id&limit=1"
+        );
+
+
+      const data = {
+
+        business_name:
+          businessName,
+
+        location:
+          location,
+
+        whatsapp:
+          whatsapp,
+
+        delivery_info:
+          delivery,
+
+        updated_at:
+          new Date().toISOString()
+
+      };
+
+
+      if(existing && existing.length > 0){
+
+        await supabaseRequest(
+          "/rest/v1/business_settings?id=eq." +
+          existing[0].id,
+          {
+            method:"PATCH",
+
+            headers:{
+              "Prefer":"return=minimal"
+            },
+
+            body:JSON.stringify(data)
+          }
+        );
+
+      }else{
+
+        await supabaseRequest(
+          "/rest/v1/business_settings",
+          {
+            method:"POST",
+
+            headers:{
+              "Prefer":"return=minimal"
+            },
+
+            body:JSON.stringify(data)
+          }
+        );
+
+      }
+
+
+      showStatus(
+        "Business information saved! ✅",
+        "success"
+      );
+
+
+    }catch(error){
+
+      showStatus(
+        "Could not save business information: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  function escapeHtml(value){
+
+    return String(value)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+
+  }
+
+
+  function escapeJs(value){
+
+    return String(value)
+      .replace(/\\/g,"\\\\")
+      .replace(/'/g,"\\'")
+      .replace(/"/g,"&quot;");
+
+  }
+
+
+  /*
+    Load everything when the admin page opens.
+  */
+
+  loadMenu();
+
+  loadBusinessSettings();
+
+</script>
+
+</body>
+</html>
