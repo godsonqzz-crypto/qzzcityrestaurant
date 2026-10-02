@@ -234,6 +234,20 @@
     }
   </style>
 </head>
+  <!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://namhbnphcrxjmgkbtqgs.supabase.co";
+  const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  console.log("QzzCityRestaurant Supabase connected!");
+</script>
 
 <body>
 
