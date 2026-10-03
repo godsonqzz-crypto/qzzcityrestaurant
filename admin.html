@@ -15,6 +15,7 @@ section,.login{background:#fff;padding:20px;margin-bottom:20px;border-radius:10p
 input,select,textarea,button{width:100%;padding:12px;margin:6px 0;border-radius:6px;font-size:16px}
 input,select,textarea{border:1px solid #ccc}
 button{border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
 .loginBtn{background:#ffd400}
 .add{background:#20b15a;color:#fff}
 .save{background:#1769aa;color:#fff}
@@ -29,6 +30,33 @@ button{border:0;font-weight:bold;cursor:pointer}
 .ok{background:#dff5e7;color:#126b35}
 .hide{display:none}
 .center{text-align:center}
+.preview{
+  width:100%;
+  max-width:350px;
+  max-height:250px;
+  object-fit:cover;
+  border-radius:10px;
+  margin:10px 0;
+  display:none;
+  border:2px solid #ddd;
+}
+.menuImage{
+  width:100%;
+  max-width:350px;
+  max-height:220px;
+  object-fit:cover;
+  border-radius:10px;
+  margin:10px 0;
+}
+.photo-label{
+  display:block;
+  font-weight:bold;
+  margin-top:10px;
+}
+.small{
+  font-size:13px;
+  color:#666;
+}
 </style>
 </head>
 
@@ -80,9 +108,18 @@ button{border:0;font-weight:bold;cursor:pointer}
 <option>OTHER</option>
 </select>
 
-<input id="price" type="number" placeholder="Price (R)" min="0">
+<input id="price" type="number" placeholder="Price (R)" min="0" step="0.01">
 
 <textarea id="description" placeholder="Description"></textarea>
+
+<label class="photo-label">📸 Menu Photo</label>
+<input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
+
+<p class="small">
+JPG, PNG or WebP • Maximum 5 MB
+</p>
+
+<img id="preview" class="preview" alt="Photo preview">
 
 <button id="add" class="add">➕ ADD MENU ITEM</button>
 </section>
@@ -125,26 +162,120 @@ button{border:0;font-weight:bold;cursor:pointer}
 const URL="https://namhbnphcrxjmgkbtqgs.supabase.co";
 const KEY="sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
 
+const BUCKET="menu-images";
+
 let session=null;
 
 const $=id=>document.getElementById(id);
 
+
+/* MESSAGE */
+
 function message(id,text,error=false){
-$(id).innerHTML='<div class="msg '+(error?'error':'ok')+'">'+text+'</div>';
+  $(id).innerHTML=
+    '<div class="msg '+(error?'error':'ok')+'">'+safe(text)+'</div>';
 }
+
+
+/* API */
 
 async function api(path,opt={}){
-if(!session)throw Error("Please log in again.");
 
-return fetch(URL+path,{
-...opt,
-headers:{
-apikey:KEY,
-Authorization:"Bearer "+session.access_token,
-"Content-Type":"application/json",
-...(opt.headers||{})
+  if(!session){
+    throw Error("Please log in again.");
+  }
+
+  let r=await fetch(URL+path,{
+    ...opt,
+    headers:{
+      apikey:KEY,
+      Authorization:"Bearer "+session.access_token,
+      ...(opt.body && !(opt.body instanceof FormData)
+        ? {"Content-Type":"application/json"}
+        : {}),
+      ...(opt.headers||{})
+    }
+  });
+
+  /* Try refreshing the session if JWT expired */
+  if(r.status===401 || r.status===403){
+
+    let refreshed=await refreshSession();
+
+    if(refreshed){
+
+      r=await fetch(URL+path,{
+        ...opt,
+        headers:{
+          apikey:KEY,
+          Authorization:"Bearer "+session.access_token,
+          ...(opt.body && !(opt.body instanceof FormData)
+            ? {"Content-Type":"application/json"}
+            : {}),
+          ...(opt.headers||{})
+        }
+      });
+
+    }
+
+  }
+
+  return r;
 }
-});
+
+
+/* REFRESH SESSION */
+
+async function refreshSession(){
+
+  try{
+
+    if(!session || !session.refresh_token){
+      return false;
+    }
+
+    let r=await fetch(
+      URL+"/auth/v1/token?grant_type=refresh_token",
+      {
+        method:"POST",
+        headers:{
+          apikey:KEY,
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          refresh_token:session.refresh_token
+        })
+      }
+    );
+
+    if(!r.ok){
+      return false;
+    }
+
+    let data=await r.json();
+
+    if(!data.access_token){
+      return false;
+    }
+
+    session={
+      ...session,
+      ...data
+    };
+
+    localStorage.setItem(
+      "qzzcity_session",
+      JSON.stringify(session)
+    );
+
+    return true;
+
+  }catch(e){
+
+    return false;
+
+  }
+
 }
 
 
@@ -152,64 +283,74 @@ Authorization:"Bearer "+session.access_token,
 
 $("loginBtn").onclick=async()=>{
 
-let email=$("email").value.trim();
-let password=$("password").value;
+  let email=$("email").value.trim();
+  let password=$("password").value;
 
-if(!email||!password){
-message("loginMsg","Enter your email and password.",true);
-return;
-}
+  if(!email||!password){
+    message("loginMsg","Enter your email and password.",true);
+    return;
+  }
 
-$("loginBtn").disabled=true;
-$("loginBtn").textContent="⏳ LOGGING IN...";
+  $("loginBtn").disabled=true;
+  $("loginBtn").textContent="⏳ LOGGING IN...";
 
-try{
+  try{
 
-let r=await fetch(
-URL+"/auth/v1/token?grant_type=password",
-{
-method:"POST",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({email,password})
-});
+    let r=await fetch(
+      URL+"/auth/v1/token?grant_type=password",
+      {
+        method:"POST",
+        headers:{
+          apikey:KEY,
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          email,
+          password
+        })
+      }
+    );
 
-let text=await r.text();
-let data={};
+    let text=await r.text();
+    let data={};
 
-try{data=JSON.parse(text)}catch(e){}
+    try{
+      data=JSON.parse(text);
+    }catch(e){}
 
-if(!r.ok)
-throw Error(
-data.error_description||
-data.msg||
-data.message||
-text||
-"Login failed"
-);
+    if(!r.ok)
+      throw Error(
+        data.error_description||
+        data.msg||
+        data.message||
+        text||
+        "Login failed"
+      );
 
-if(!data.access_token)
-throw Error("No login token received.");
+    if(!data.access_token)
+      throw Error("No login token received.");
 
-session=data;
+    session=data;
 
-localStorage.setItem(
-"qzzcity_session",
-JSON.stringify(data)
-);
+    localStorage.setItem(
+      "qzzcity_session",
+      JSON.stringify(data)
+    );
 
-showAdmin();
+    showAdmin();
 
-}catch(e){
+  }catch(e){
 
-message("loginMsg","Login failed: "+e.message,true);
+    message(
+      "loginMsg",
+      "Login failed: "+e.message,
+      true
+    );
 
-}
+  }
 
-$("loginBtn").disabled=false;
-$("loginBtn").textContent="🔐 LOGIN";
+  $("loginBtn").disabled=false;
+  $("loginBtn").textContent="🔐 LOGIN";
 
 };
 
@@ -218,13 +359,14 @@ $("loginBtn").textContent="🔐 LOGIN";
 
 function showAdmin(){
 
-$("login").classList.add("hide");
-$("admin").classList.remove("hide");
+  $("login").classList.add("hide");
+  $("admin").classList.remove("hide");
 
-$("user").textContent=session.user?.email||"Admin";
+  $("user").textContent=
+    session.user?.email||"Admin";
 
-loadMenu();
-loadBusiness();
+  loadMenu();
+  loadBusiness();
 
 }
 
@@ -233,55 +375,219 @@ loadBusiness();
 
 $("logout").onclick=()=>{
 
-session=null;
-localStorage.removeItem("qzzcity_session");
+  session=null;
 
-$("admin").classList.add("hide");
-$("login").classList.remove("hide");
+  localStorage.removeItem(
+    "qzzcity_session"
+  );
+
+  $("admin").classList.add("hide");
+  $("login").classList.remove("hide");
 
 };
+
+
+/* PHOTO PREVIEW */
+
+$("photo").onchange=()=>{
+
+  let file=$("photo").files[0];
+
+  $("preview").style.display="none";
+
+  if(!file){
+    return;
+  }
+
+  if(!file.type.startsWith("image/")){
+    message(
+      "msg",
+      "Please choose an image file.",
+      true
+    );
+    $("photo").value="";
+    return;
+  }
+
+  if(file.size>5*1024*1024){
+    message(
+      "msg",
+      "Photo is too large. Maximum size is 5 MB.",
+      true
+    );
+    $("photo").value="";
+    return;
+  }
+
+  let reader=new FileReader();
+
+  reader.onload=e=>{
+    $("preview").src=e.target.result;
+    $("preview").style.display="block";
+  };
+
+  reader.readAsDataURL(file);
+
+};
+
+
+/* UPLOAD PHOTO */
+
+async function uploadPhoto(file){
+
+  if(!file){
+    return null;
+  }
+
+  let extension=
+    file.name.split(".").pop().toLowerCase();
+
+  let safeExtension=
+    ["jpg","jpeg","png","webp"].includes(extension)
+      ? extension
+      : "jpg";
+
+  let filename=
+    Date.now()+"-"+Math.random()
+    .toString(36)
+    .substring(2,10)
+    +"."+safeExtension;
+
+  let path=filename;
+
+  let r=await api(
+    "/storage/v1/object/"+BUCKET+"/"+path,
+    {
+      method:"POST",
+      headers:{
+        "x-upsert":"false"
+      },
+      body:file
+    }
+  );
+
+  if(!r.ok){
+    throw Error(await r.text());
+  }
+
+  return URL+
+    "/storage/v1/object/public/"+
+    BUCKET+"/"+path;
+
+}
 
 
 /* ADD MENU */
 
 $("add").onclick=async()=>{
 
-let name=$("name").value.trim();
-let category=$("category").value;
-let price=Number($("price").value);
-let description=$("description").value.trim();
+  let name=$("name").value.trim();
+  let category=$("category").value;
+  let price=Number($("price").value);
+  let description=$("description").value.trim();
+  let file=$("photo").files[0];
 
-if(!name||isNaN(price)){
-message("msg","Enter food name and valid price.",true);
-return;
-}
+  if(!name||isNaN(price)){
+    message(
+      "msg",
+      "Enter food name and valid price.",
+      true
+    );
+    return;
+  }
 
-try{
+  if(file){
 
-let r=await api("/rest/v1/menu_items",{
-method:"POST",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify({
-name,
-category,
-price,
-description,
-is_available:false
-})
-});
+    if(!file.type.startsWith("image/")){
+      message(
+        "msg",
+        "Please choose an image file.",
+        true
+      );
+      return;
+    }
 
-if(!r.ok)throw Error(await r.text());
+    if(file.size>5*1024*1024){
+      message(
+        "msg",
+        "Photo is too large. Maximum size is 5 MB.",
+        true
+      );
+      return;
+    }
 
-$("name").value="";
-$("price").value="";
-$("description").value="";
+  }
 
-message("msg","Menu item added successfully! 🎉");
-loadMenu();
+  $("add").disabled=true;
+  $("add").textContent="⏳ ADDING ITEM...";
 
-}catch(e){
-message("msg","Could not add item: "+e.message,true);
-}
+  try{
+
+    let image_url=null;
+
+    /* Upload photo first */
+    if(file){
+
+      $("add").textContent="⏳ UPLOADING PHOTO...";
+
+      image_url=await uploadPhoto(file);
+
+    }
+
+    $("add").textContent="⏳ SAVING MENU ITEM...";
+
+    let r=await api(
+      "/rest/v1/menu_items",
+      {
+        method:"POST",
+        headers:{
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify({
+          name,
+          category,
+          price,
+          description,
+          image_url,
+          is_available:false
+        })
+      }
+    );
+
+    if(!r.ok){
+
+      /* If database insert fails after photo upload,
+         the photo can remain in storage safely. */
+      throw Error(await r.text());
+
+    }
+
+    $("name").value="";
+    $("price").value="";
+    $("description").value="";
+    $("photo").value="";
+    $("preview").src="";
+    $("preview").style.display="none";
+
+    message(
+      "msg",
+      "Menu item and photo added successfully! 🎉📸"
+    );
+
+    loadMenu();
+
+  }catch(e){
+
+    message(
+      "msg",
+      "Could not add item: "+e.message,
+      true
+    );
+
+  }
+
+  $("add").disabled=false;
+  $("add").textContent="➕ ADD MENU ITEM";
 
 };
 
@@ -290,65 +596,158 @@ message("msg","Could not add item: "+e.message,true);
 
 async function loadMenu(){
 
-$("menu").innerHTML="Loading menu...";
+  $("menu").innerHTML="Loading menu...";
 
-try{
+  try{
 
-let r=await api(
-"/rest/v1/menu_items?select=*&order=id.asc"
-);
+    let r=await api(
+      "/rest/v1/menu_items?select=*&order=id.asc"
+    );
 
-if(!r.ok)throw Error(await r.text());
+    if(!r.ok)
+      throw Error(await r.text());
 
-let items=await r.json();
+    let items=await r.json();
 
-if(!items.length){
-$("menu").innerHTML="<p class='center'>No menu items yet.</p>";
-return;
-}
+    if(!items.length){
 
-$("menu").innerHTML="";
+      $("menu").innerHTML=
+        "<p class='center'>No menu items yet.</p>";
 
-items.forEach(x=>{
+      return;
 
-let available=x.is_available===true;
+    }
 
-let div=document.createElement("div");
-div.className="item";
+    $("menu").innerHTML="";
 
-div.innerHTML=
-"<h3>"+safe(x.name||"Menu Item")+"</h3>"+
-"<p>"+safe(x.category||"OTHER")+" • R"+Number(x.price||0).toFixed(2)+"</p>"+
-"<p>"+safe(x.description||"")+"</p>"+
-"<strong>"+(available?"🟢 AVAILABLE":"🔴 UNAVAILABLE")+"</strong><br>";
+    items.forEach(x=>{
 
-let priceBtn=document.createElement("button");
-priceBtn.className="price";
-priceBtn.textContent="💰 CHANGE PRICE";
-priceBtn.onclick=()=>changePrice(x.id,x.price);
+      let available=
+        x.is_available===true;
 
-let availBtn=document.createElement("button");
-availBtn.className="avail";
-availBtn.textContent=available?"🔴 MARK UNAVAILABLE":"🟢 MARK AVAILABLE";
-availBtn.onclick=()=>toggle(x.id,available);
+      let div=
+        document.createElement("div");
 
-let delBtn=document.createElement("button");
-delBtn.className="del";
-delBtn.textContent="🗑️ DELETE";
-delBtn.onclick=()=>removeItem(x.id);
+      div.className="item";
 
-div.append(priceBtn,availBtn,delBtn);
+      let title=
+        document.createElement("h3");
 
-$("menu").appendChild(div);
+      title.textContent=
+        x.name||"Menu Item";
 
-});
+      div.appendChild(title);
 
-}catch(e){
 
-$("menu").innerHTML=
-"<p class='msg error'>Could not load menu:<br>"+safe(e.message)+"</p>";
+      /* IMAGE */
 
-}
+      if(x.image_url){
+
+        let img=
+          document.createElement("img");
+
+        img.className="menuImage";
+        img.src=x.image_url;
+        img.alt=x.name||"Menu item";
+        img.loading="lazy";
+
+        div.appendChild(img);
+
+      }
+
+
+      let info=
+        document.createElement("p");
+
+      info.textContent=
+        (x.category||"OTHER")+
+        " • R"+
+        Number(x.price||0).toFixed(2);
+
+      div.appendChild(info);
+
+
+      let desc=
+        document.createElement("p");
+
+      desc.textContent=
+        x.description||"";
+
+      div.appendChild(desc);
+
+
+      let status=
+        document.createElement("strong");
+
+      status.textContent=
+        available
+          ?"🟢 AVAILABLE"
+          :"🔴 UNAVAILABLE";
+
+      div.appendChild(status);
+
+      div.appendChild(
+        document.createElement("br")
+      );
+
+
+      let priceBtn=
+        document.createElement("button");
+
+      priceBtn.className="price";
+      priceBtn.textContent=
+        "💰 CHANGE PRICE";
+
+      priceBtn.onclick=()=>{
+        changePrice(x.id,x.price);
+      };
+
+
+      let availBtn=
+        document.createElement("button");
+
+      availBtn.className="avail";
+
+      availBtn.textContent=
+        available
+          ?"🔴 MARK UNAVAILABLE"
+          :"🟢 MARK AVAILABLE";
+
+      availBtn.onclick=()=>{
+        toggle(x.id,available);
+      };
+
+
+      let delBtn=
+        document.createElement("button");
+
+      delBtn.className="del";
+      delBtn.textContent=
+        "🗑️ DELETE";
+
+      delBtn.onclick=()=>{
+        removeItem(x.id,x.image_url);
+      };
+
+
+      div.append(
+        priceBtn,
+        availBtn,
+        delBtn
+      );
+
+      $("menu").appendChild(div);
+
+    });
+
+  }catch(e){
+
+    $("menu").innerHTML=
+      "<p class='msg error'>Could not load menu:<br>"+
+      safe(e.message)+
+      "</p>";
+
+  }
 
 }
 
@@ -357,35 +756,54 @@ $("menu").innerHTML=
 
 async function changePrice(id,old){
 
-let value=prompt("New price (R):",old);
+  let value=
+    prompt("New price (R):",old);
 
-if(value===null)return;
+  if(value===null)return;
 
-let price=Number(value);
+  let price=Number(value);
 
-if(isNaN(price)||price<0){
-alert("Enter a valid price.");
-return;
-}
+  if(isNaN(price)||price<0){
 
-try{
+    alert("Enter a valid price.");
+    return;
 
-let r=await api(
-"/rest/v1/menu_items?id=eq."+id,
-{
-method:"PATCH",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify({price})
-});
+  }
 
-if(!r.ok)throw Error(await r.text());
+  try{
 
-message("msg","Price updated! 💰");
-loadMenu();
+    let r=await api(
+      "/rest/v1/menu_items?id=eq."+id,
+      {
+        method:"PATCH",
+        headers:{
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify({
+          price
+        })
+      }
+    );
 
-}catch(e){
-message("msg","Could not update price: "+e.message,true);
-}
+    if(!r.ok)
+      throw Error(await r.text());
+
+    message(
+      "msg",
+      "Price updated! 💰"
+    );
+
+    loadMenu();
+
+  }catch(e){
+
+    message(
+      "msg",
+      "Could not update price: "+e.message,
+      true
+    );
+
+  }
 
 }
 
@@ -394,49 +812,128 @@ message("msg","Could not update price: "+e.message,true);
 
 async function toggle(id,current){
 
-try{
+  try{
 
-let r=await api(
-"/rest/v1/menu_items?id=eq."+id,
-{
-method:"PATCH",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify({is_available:!current})
-});
+    let r=await api(
+      "/rest/v1/menu_items?id=eq."+id,
+      {
+        method:"PATCH",
+        headers:{
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify({
+          is_available:!current
+        })
+      }
+    );
 
-if(!r.ok)throw Error(await r.text());
+    if(!r.ok)
+      throw Error(await r.text());
 
-message("msg","Availability updated! ✅");
-loadMenu();
+    message(
+      "msg",
+      "Availability updated! ✅"
+    );
 
-}catch(e){
-message("msg","Could not update availability: "+e.message,true);
+    loadMenu();
+
+  }catch(e){
+
+    message(
+      "msg",
+      "Could not update availability: "+e.message,
+      true
+    );
+
+  }
+
 }
 
+
+/* DELETE PHOTO */
+
+async function deletePhoto(imageUrl){
+
+  if(!imageUrl){
+    return;
+  }
+
+  try{
+
+    let marker=
+      "/storage/v1/object/public/"+
+      BUCKET+"/";
+
+    let index=
+      imageUrl.indexOf(marker);
+
+    if(index===-1){
+      return;
+    }
+
+    let path=
+      imageUrl.substring(
+        index+marker.length
+      );
+
+    await api(
+      "/storage/v1/object/"+
+      BUCKET+"/"+
+      path,
+      {
+        method:"DELETE"
+      }
+    );
+
+  }catch(e){
+
+    console.log(
+      "Photo delete warning:",
+      e
+    );
+
+  }
+
 }
 
 
-/* DELETE */
+/* DELETE MENU ITEM */
 
-async function removeItem(id){
+async function removeItem(id,imageUrl){
 
-if(!confirm("Delete this menu item?"))return;
+  if(!confirm("Delete this menu item?"))
+    return;
 
-try{
+  try{
 
-let r=await api(
-"/rest/v1/menu_items?id=eq."+id,
-{method:"DELETE"}
-);
+    let r=await api(
+      "/rest/v1/menu_items?id=eq."+id,
+      {
+        method:"DELETE"
+      }
+    );
 
-if(!r.ok)throw Error(await r.text());
+    if(!r.ok)
+      throw Error(await r.text());
 
-message("msg","Menu item deleted.");
-loadMenu();
+    await deletePhoto(imageUrl);
 
-}catch(e){
-message("msg","Could not delete item: "+e.message,true);
-}
+    message(
+      "msg",
+      "Menu item deleted."
+    );
+
+    loadMenu();
+
+  }catch(e){
+
+    message(
+      "msg",
+      "Could not delete item: "+e.message,
+      true
+    );
+
+  }
 
 }
 
@@ -445,30 +942,39 @@ message("msg","Could not delete item: "+e.message,true);
 
 async function loadBusiness(){
 
-try{
+  try{
 
-let r=await api(
-"/rest/v1/business_settings?select=*&limit=1"
-);
+    let r=await api(
+      "/rest/v1/business_settings?select=*&limit=1"
+    );
 
-if(!r.ok)return;
+    if(!r.ok)return;
 
-let data=await r.json();
+    let data=await r.json();
 
-if(data.length){
+    if(data.length){
 
-let x=data[0];
+      let x=data[0];
 
-$("businessName").value=x.business_name||"";
-$("location").value=x.location||"";
-$("whatsapp").value=x.whatsapp_number||"";
-$("delivery").value=x.delivery_information||"";
+      $("businessName").value=
+        x.business_name||"";
 
-}
+      $("location").value=
+        x.location||"";
 
-}catch(e){
-console.log(e);
-}
+      $("whatsapp").value=
+        x.whatsapp_number||"";
+
+      $("delivery").value=
+        x.delivery_information||"";
+
+    }
+
+  }catch(e){
+
+    console.log(e);
+
+  }
 
 }
 
@@ -477,57 +983,78 @@ console.log(e);
 
 $("save").onclick=async()=>{
 
-let body={
-business_name:$("businessName").value.trim(),
-location:$("location").value.trim(),
-whatsapp_number:$("whatsapp").value.trim(),
-delivery_information:$("delivery").value.trim()
-};
+  let body={
+    business_name:
+      $("businessName").value.trim(),
 
-try{
+    location:
+      $("location").value.trim(),
 
-let check=await api(
-"/rest/v1/business_settings?select=id&limit=1"
-);
+    whatsapp_number:
+      $("whatsapp").value.trim(),
 
-if(!check.ok)throw Error(await check.text());
+    delivery_information:
+      $("delivery").value.trim()
+  };
 
-let data=await check.json();
-let r;
+  try{
 
-if(data.length){
+    let check=await api(
+      "/rest/v1/business_settings?select=id&limit=1"
+    );
 
-r=await api(
-"/rest/v1/business_settings?id=eq."+data[0].id,
-{
-method:"PATCH",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify(body)
-}
-);
+    if(!check.ok)
+      throw Error(await check.text());
 
-}else{
+    let data=await check.json();
+    let r;
 
-r=await api(
-"/rest/v1/business_settings",
-{
-method:"POST",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify(body)
-}
-);
+    if(data.length){
 
-}
+      r=await api(
+        "/rest/v1/business_settings?id=eq."+
+        data[0].id,
+        {
+          method:"PATCH",
+          headers:{
+            Prefer:"return=minimal"
+          },
+          body:JSON.stringify(body)
+        }
+      );
 
-if(!r.ok)throw Error(await r.text());
+    }else{
 
-message("msg","Business information saved! 💾");
+      r=await api(
+        "/rest/v1/business_settings",
+        {
+          method:"POST",
+          headers:{
+            Prefer:"return=minimal"
+          },
+          body:JSON.stringify(body)
+        }
+      );
 
-}catch(e){
+    }
 
-message("msg","Could not save: "+e.message,true);
+    if(!r.ok)
+      throw Error(await r.text());
 
-}
+    message(
+      "msg",
+      "Business information saved! 💾"
+    );
+
+  }catch(e){
+
+    message(
+      "msg",
+      "Could not save: "+e.message,
+      true
+    );
+
+  }
 
 };
 
@@ -536,12 +1063,12 @@ message("msg","Could not save: "+e.message,true);
 
 function safe(x){
 
-return String(x)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+  return String(x)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
@@ -550,24 +1077,30 @@ return String(x)
 
 try{
 
-let saved=localStorage.getItem("qzzcity_session");
+  let saved=
+    localStorage.getItem(
+      "qzzcity_session"
+    );
 
-if(saved){
+  if(saved){
 
-let s=JSON.parse(saved);
+    let s=JSON.parse(saved);
 
-if(s&&s.access_token){
+    if(s&&s.access_token){
 
-session=s;
-showAdmin();
+      session=s;
 
-}
+      showAdmin();
 
-}
+    }
+
+  }
 
 }catch(e){
 
-localStorage.removeItem("qzzcity_session");
+  localStorage.removeItem(
+    "qzzcity_session"
+  );
 
 }
 
@@ -575,3 +1108,4 @@ localStorage.removeItem("qzzcity_session");
 
 </body>
   </html>
+  
