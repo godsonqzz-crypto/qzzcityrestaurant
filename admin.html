@@ -15,6 +15,7 @@
       --green:#20b15a;
       --red:#d93025;
       --blue:#1769aa;
+      --orange:#f0a500;
     }
 
     *{
@@ -153,7 +154,7 @@
 
     .status{
       font-weight:bold;
-      margin-bottom:12px;
+      margin:12px 0;
     }
 
     .available{
@@ -171,7 +172,7 @@
     }
 
     .price-btn{
-      background:#f0a500;
+      background:var(--orange);
       color:white;
     }
 
@@ -199,6 +200,7 @@
       border-radius:7px;
       margin-bottom:15px;
       font-weight:bold;
+      word-break:break-word;
     }
 
     .success{
@@ -243,6 +245,23 @@
       color:#666;
       padding:20px;
     }
+
+    .loading{
+      text-align:center;
+      padding:20px;
+      color:#555;
+    }
+
+    .debug-box{
+      background:#fff3cd;
+      border:1px solid #ffe69c;
+      color:#664d03;
+      padding:12px;
+      border-radius:7px;
+      margin-top:12px;
+      font-size:13px;
+      word-break:break-word;
+    }
   </style>
 </head>
 
@@ -263,20 +282,27 @@
   <div id="loginMessage" class="message"></div>
 
   <label>Email</label>
+
   <input
     type="email"
     id="loginEmail"
-    placeholder="Your email">
+    placeholder="Your email"
+    autocomplete="email"
+  >
 
   <label>Password</label>
+
   <input
     type="password"
     id="loginPassword"
-    placeholder="Your password">
+    placeholder="Your password"
+    autocomplete="current-password"
+  >
 
   <button
     class="login-btn"
-    onclick="login()">
+    onclick="login()"
+  >
     🔐 LOGIN
   </button>
 
@@ -296,7 +322,8 @@
 
     <button
       class="logout"
-      onclick="logout()">
+      onclick="logout()"
+    >
       🚪 LOG OUT
     </button>
 
@@ -322,8 +349,8 @@
     <input
       type="text"
       id="foodName"
-      placeholder="Example: Cheese Burger">
-
+      placeholder="Example: Cheese Burger"
+    >
 
     <label>Category</label>
 
@@ -337,7 +364,6 @@
 
     </select>
 
-
     <label>Price (R)</label>
 
     <input
@@ -345,19 +371,20 @@
       id="foodPrice"
       placeholder="20"
       min="0"
-      step="0.01">
-
+      step="0.01"
+    >
 
     <label>Description</label>
 
     <textarea
       id="foodDescription"
-      placeholder="Describe the food item"></textarea>
-
+      placeholder="Describe the food item"
+    ></textarea>
 
     <button
       class="add-btn"
-      onclick="addMenuItem()">
+      onclick="addMenuItem()"
+    >
       ➕ ADD MENU ITEM
     </button>
 
@@ -371,7 +398,9 @@
     <h2>🍔 Current Menu</h2>
 
     <div id="menuList">
-      Loading menu...
+      <div class="loading">
+        Loading menu...
+      </div>
     </div>
 
   </div>
@@ -388,36 +417,37 @@
     <input
       type="text"
       id="businessName"
-      placeholder="QzzCityRestaurant">
-
+      placeholder="QzzCityRestaurant"
+    >
 
     <label>Location</label>
 
     <input
       type="text"
       id="businessLocation"
-      placeholder="Hammarsdale, Mpumalanga Unit 3">
-
+      placeholder="Hammarsdale, Mpumalanga Unit 3"
+    >
 
     <label>WhatsApp Number</label>
 
     <input
       type="text"
       id="businessWhatsApp"
-      placeholder="071 538 2395">
-
+      placeholder="071 538 2395"
+    >
 
     <label>Delivery Information</label>
 
     <input
       type="text"
       id="businessDelivery"
-      placeholder="Delivery is Free!!">
-
+      placeholder="Delivery is Free!!"
+    >
 
     <button
       class="save-btn"
-      onclick="saveBusinessInformation()">
+      onclick="saveBusinessInformation()"
+    >
       💾 SAVE BUSINESS INFORMATION
     </button>
 
@@ -437,7 +467,8 @@
     <a
       class="button-link website-btn"
       href="./index.html"
-      target="_blank">
+      target="_blank"
+    >
       🌐 OPEN CUSTOMER WEBSITE
     </a>
 
@@ -466,14 +497,20 @@
 
   /*
    * ==========================================
-   * SUPABASE REQUEST HELPER
+   * SUPABASE REQUEST
    * ==========================================
    */
 
-  async function supabaseRequest(
-    endpoint,
-    options = {}
-  ){
+  async function supabaseRequest(endpoint, options = {}) {
+
+    if (!currentSession || !currentSession.access_token) {
+
+      throw new Error(
+        "Your admin session has expired. Please log in again."
+      );
+
+    }
+
 
     const headers = {
 
@@ -481,11 +518,7 @@
         SUPABASE_PUBLISHABLE_KEY,
 
       "Authorization":
-        "Bearer " +
-        (
-          currentSession?.access_token ||
-          SUPABASE_PUBLISHABLE_KEY
-        ),
+        "Bearer " + currentSession.access_token,
 
       "Content-Type":
         "application/json",
@@ -499,13 +532,12 @@
       SUPABASE_URL + endpoint,
       {
         ...options,
-        headers
+        headers:headers
       }
     );
 
 
     return response;
-
   }
 
 
@@ -515,16 +547,21 @@
    * ==========================================
    */
 
-  async function login(){
+  async function login() {
 
     const email =
-      document.getElementById("loginEmail").value.trim();
+      document
+        .getElementById("loginEmail")
+        .value
+        .trim();
 
     const password =
-      document.getElementById("loginPassword").value;
+      document
+        .getElementById("loginPassword")
+        .value;
 
 
-    if(!email || !password){
+    if (!email || !password) {
 
       showMessage(
         "loginMessage",
@@ -536,40 +573,47 @@
     }
 
 
-    try{
+    try {
 
-      const response =
-        await fetch(
-          SUPABASE_URL +
-          "/auth/v1/token?grant_type=password",
-          {
-            method:"POST",
+      showMessage(
+        "loginMessage",
+        "Logging in...",
+        "success"
+      );
 
-            headers:{
-              "apikey":
-                SUPABASE_PUBLISHABLE_KEY,
 
-              "Content-Type":
-                "application/json"
-            },
+      const response = await fetch(
+        SUPABASE_URL +
+        "/auth/v1/token?grant_type=password",
+        {
+          method:"POST",
 
-            body:JSON.stringify({
-              email:email,
-              password:password
-            })
-          }
-        );
+          headers:{
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            email:email,
+            password:password
+          })
+        }
+      );
 
 
       const data =
         await response.json();
 
 
-      if(!response.ok){
+      if (!response.ok) {
 
         throw new Error(
           data.error_description ||
           data.msg ||
+          data.message ||
           "Login failed."
         );
 
@@ -587,12 +631,13 @@
 
       showAdmin();
 
+    }
 
-    }catch(error){
+    catch(error) {
 
       showMessage(
         "loginMessage",
-        error.message,
+        "Login failed: " + error.message,
         "error"
       );
 
@@ -607,7 +652,7 @@
    * ==========================================
    */
 
-  function checkLogin(){
+  function checkLogin() {
 
     const saved =
       localStorage.getItem(
@@ -615,22 +660,39 @@
       );
 
 
-    if(saved){
+    if (!saved) {
 
-      try{
+      return;
+    }
 
-        currentSession =
-          JSON.parse(saved);
 
-        showAdmin();
+    try {
 
-      }catch(error){
+      currentSession =
+        JSON.parse(saved);
 
-        localStorage.removeItem(
-          "qzzcity_session"
-        );
+
+      if (
+        !currentSession ||
+        !currentSession.access_token
+      ) {
+
+        throw new Error("Invalid session");
 
       }
+
+
+      showAdmin();
+
+    }
+
+    catch(error) {
+
+      localStorage.removeItem(
+        "qzzcity_session"
+      );
+
+      currentSession = null;
 
     }
 
@@ -643,7 +705,7 @@
    * ==========================================
    */
 
-  function showAdmin(){
+  function showAdmin() {
 
     document
       .getElementById("loginScreen")
@@ -675,7 +737,7 @@
    * ==========================================
    */
 
-  function logout(){
+  function logout() {
 
     currentSession = null;
 
@@ -702,26 +764,32 @@
    * ==========================================
    */
 
-  async function addMenuItem(){
+  async function addMenuItem() {
 
     const name =
-      document.getElementById("foodName")
-      .value.trim();
+      document
+        .getElementById("foodName")
+        .value
+        .trim();
 
     const category =
-      document.getElementById("foodCategory")
-      .value;
+      document
+        .getElementById("foodCategory")
+        .value;
 
-    const price =
-      document.getElementById("foodPrice")
-      .value;
+    const priceText =
+      document
+        .getElementById("foodPrice")
+        .value;
 
     const description =
-      document.getElementById("foodDescription")
-      .value.trim();
+      document
+        .getElementById("foodDescription")
+        .value
+        .trim();
 
 
-    if(!name || price === ""){
+    if (!name || priceText === "") {
 
       showMessage(
         "adminMessage",
@@ -733,7 +801,23 @@
     }
 
 
-    try{
+    const price =
+      Number(priceText);
+
+
+    if (isNaN(price) || price < 0) {
+
+      showMessage(
+        "adminMessage",
+        "Please enter a valid price.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    try {
 
       const response =
         await supabaseRequest(
@@ -752,7 +836,7 @@
 
               category:category,
 
-              price:Number(price),
+              price:price,
 
               description:description,
 
@@ -763,19 +847,30 @@
         );
 
 
-      if(!response.ok){
+      if (!response.ok) {
 
-        const error =
+        const errorText =
           await response.text();
 
-        throw new Error(error);
+        throw new Error(
+          errorText ||
+          "Supabase rejected the menu item."
+        );
 
       }
 
 
-      document.getElementById("foodName").value = "";
-      document.getElementById("foodPrice").value = "";
-      document.getElementById("foodDescription").value = "";
+      document
+        .getElementById("foodName")
+        .value = "";
+
+      document
+        .getElementById("foodPrice")
+        .value = "";
+
+      document
+        .getElementById("foodDescription")
+        .value = "";
 
 
       showMessage(
@@ -785,10 +880,11 @@
       );
 
 
-      loadMenu();
+      await loadMenu();
 
+    }
 
-    }catch(error){
+    catch(error) {
 
       showMessage(
         "adminMessage",
@@ -808,38 +904,73 @@
    * ==========================================
    */
 
-  async function loadMenu(){
+  async function loadMenu() {
 
     const list =
       document.getElementById("menuList");
 
 
     list.innerHTML =
-      "Loading menu...";
+      '<div class="loading">Loading menu...</div>';
 
 
-    try{
+    try {
 
       const response =
         await supabaseRequest(
-          "/rest/v1/menu_items?select=*&order=id.asc"
+          "/rest/v1/menu_items?select=*&order=id.asc",
+          {
+            method:"GET"
+          }
         );
 
 
-      if(!response.ok){
+      const responseText =
+        await response.text();
+
+
+      if (!response.ok) {
 
         throw new Error(
-          await response.text()
+          "Supabase error " +
+          response.status +
+          ": " +
+          responseText
         );
 
       }
 
 
-      const items =
-        await response.json();
+      let items;
 
 
-      if(!items.length){
+      try {
+
+        items =
+          JSON.parse(responseText);
+
+      }
+
+      catch(error) {
+
+        throw new Error(
+          "Supabase returned invalid data: " +
+          responseText
+        );
+
+      }
+
+
+      if (!Array.isArray(items)) {
+
+        throw new Error(
+          "Unexpected menu data returned by Supabase."
+        );
+
+      }
+
+
+      if (!items.length) {
 
         list.innerHTML =
           `<div class="empty">
@@ -863,8 +994,8 @@
 
 
         const available =
-          item.available === true ||
-          item.is_available === true;
+          item.is_available === true ||
+          item.available === true;
 
 
         const name =
@@ -880,7 +1011,7 @@
 
         const price =
           Number(item.price || 0)
-            .toFixed(0);
+            .toFixed(2);
 
 
         const description =
@@ -923,37 +1054,30 @@
 
             <button
               class="price-btn"
-              onclick="changePrice(${item.id}, ${price})">
-
+              onclick="changePrice(${item.id}, ${Number(item.price || 0)})"
+            >
               💰 CHANGE PRICE
-
             </button>
 
             <button
               class="availability-btn"
-              onclick="toggleAvailability(
-                ${item.id},
-                ${available}
-              )">
-
+              onclick="toggleAvailability(${item.id}, ${available})"
+            >
               ${
                 available
                   ? "🔴 MARK UNAVAILABLE"
                   : "🟢 MARK AVAILABLE"
               }
-
             </button>
 
             <button
               class="delete-btn"
-              onclick="deleteMenuItem(${item.id})">
-
+              onclick="deleteMenuItem(${item.id})"
+            >
               🗑️ DELETE
-
             </button>
 
           </div>
-
         `;
 
 
@@ -961,18 +1085,23 @@
 
       });
 
+    }
 
-    }catch(error){
+    catch(error) {
 
       list.innerHTML =
         `<div class="empty">
-          Could not load menu.
+          <strong>Could not load menu.</strong>
+
+          <div class="debug-box">
+            ${escapeHTML(error.message)}
+          </div>
         </div>`;
+
 
       showMessage(
         "adminMessage",
-        "Could not load menu: " +
-        error.message,
+        "Menu loading failed. The exact Supabase error is shown under Current Menu.",
         "error"
       );
 
@@ -987,10 +1116,7 @@
    * ==========================================
    */
 
-  async function changePrice(
-    id,
-    oldPrice
-  ){
+  async function changePrice(id, oldPrice) {
 
     const newPrice =
       prompt(
@@ -999,10 +1125,10 @@
       );
 
 
-    if(
+    if (
       newPrice === null ||
       newPrice.trim() === ""
-    ){
+    ) {
 
       return;
     }
@@ -1012,7 +1138,7 @@
       Number(newPrice);
 
 
-    if(isNaN(price) || price < 0){
+    if (isNaN(price) || price < 0) {
 
       alert(
         "Please enter a valid price."
@@ -1022,12 +1148,11 @@
     }
 
 
-    try{
+    try {
 
       const response =
         await supabaseRequest(
-          "/rest/v1/menu_items?id=eq." +
-          id,
+          "/rest/v1/menu_items?id=eq." + id,
           {
             method:"PATCH",
 
@@ -1043,7 +1168,7 @@
         );
 
 
-      if(!response.ok){
+      if (!response.ok) {
 
         throw new Error(
           await response.text()
@@ -1059,10 +1184,11 @@
       );
 
 
-      loadMenu();
+      await loadMenu();
 
+    }
 
-    }catch(error){
+    catch(error) {
 
       showMessage(
         "adminMessage",
@@ -1085,14 +1211,13 @@
   async function toggleAvailability(
     id,
     currentStatus
-  ){
+  ) {
 
-    try{
+    try {
 
       const response =
         await supabaseRequest(
-          "/rest/v1/menu_items?id=eq." +
-          id,
+          "/rest/v1/menu_items?id=eq." + id,
           {
             method:"PATCH",
 
@@ -1102,13 +1227,14 @@
             },
 
             body:JSON.stringify({
-              is_available:!currentStatus
+              is_available:
+                !currentStatus
             })
           }
         );
 
 
-      if(!response.ok){
+      if (!response.ok) {
 
         throw new Error(
           await response.text()
@@ -1126,377 +1252,13 @@
       );
 
 
-      loadMenu();
+      await loadMenu();
 
+    }
 
-    }catch(error){
+    catch(error) {
 
       showMessage(
         "adminMessage",
         "Could not update availability: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  /*
-   * ==========================================
-   * DELETE MENU ITEM
-   * ==========================================
-   */
-
-  async function deleteMenuItem(id){
-
-    const confirmed =
-      confirm(
-        "Are you sure you want to delete this menu item?"
-      );
-
-
-    if(!confirmed){
-
-      return;
-    }
-
-
-    try{
-
-      const response =
-        await supabaseRequest(
-          "/rest/v1/menu_items?id=eq." +
-          id,
-          {
-            method:"DELETE"
-          }
-        );
-
-
-      if(!response.ok){
-
-        throw new Error(
-          await response.text()
-        );
-
-      }
-
-
-      showMessage(
-        "adminMessage",
-        "Menu item deleted.",
-        "success"
-      );
-
-
-      loadMenu();
-
-
-    }catch(error){
-
-      showMessage(
-        "adminMessage",
-        "Could not delete item: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  /*
-   * ==========================================
-   * LOAD BUSINESS INFORMATION
-   * ==========================================
-   */
-
-  async function loadBusinessInformation(){
-
-    try{
-
-      const response =
-        await supabaseRequest(
-          "/rest/v1/business_settings?select=*&limit=1"
-        );
-
-
-      if(!response.ok){
-
-        throw new Error(
-          await response.text()
-        );
-
-      }
-
-
-      const data =
-        await response.json();
-
-
-      if(data.length){
-
-        const info =
-          data[0];
-
-
-        document.getElementById(
-          "businessName"
-        ).value =
-          info.business_name || "";
-
-
-        document.getElementById(
-          "businessLocation"
-        ).value =
-          info.location || "";
-
-
-        document.getElementById(
-          "businessWhatsApp"
-        ).value =
-          info.whatsapp_number || "";
-
-
-        document.getElementById(
-          "businessDelivery"
-        ).value =
-          info.delivery_information || "";
-
-      }
-
-
-    }catch(error){
-
-      console.log(
-        "Business information:",
-        error
-      );
-
-    }
-
-  }
-
-
-  /*
-   * ==========================================
-   * SAVE BUSINESS INFORMATION
-   * ==========================================
-   */
-
-  async function saveBusinessInformation(){
-
-    const businessName =
-      document.getElementById(
-        "businessName"
-      ).value.trim();
-
-
-    const location =
-      document.getElementById(
-        "businessLocation"
-      ).value.trim();
-
-
-    const whatsapp =
-      document.getElementById(
-        "businessWhatsApp"
-      ).value.trim();
-
-
-    const delivery =
-      document.getElementById(
-        "businessDelivery"
-      ).value.trim();
-
-
-    try{
-
-      const check =
-        await supabaseRequest(
-          "/rest/v1/business_settings?select=id&limit=1"
-        );
-
-
-      if(!check.ok){
-
-        throw new Error(
-          await check.text()
-        );
-
-      }
-
-
-      const existing =
-        await check.json();
-
-
-      let response;
-
-
-      if(existing.length){
-
-        response =
-          await supabaseRequest(
-            "/rest/v1/business_settings?id=eq." +
-            existing[0].id,
-            {
-              method:"PATCH",
-
-              headers:{
-                "Prefer":
-                  "return=representation"
-              },
-
-              body:JSON.stringify({
-
-                business_name:
-                  businessName,
-
-                location:
-                  location,
-
-                whatsapp_number:
-                  whatsapp,
-
-                delivery_information:
-                  delivery
-
-              })
-            }
-          );
-
-
-      }else{
-
-        response =
-          await supabaseRequest(
-            "/rest/v1/business_settings",
-            {
-              method:"POST",
-
-              headers:{
-                "Prefer":
-                  "return=representation"
-              },
-
-              body:JSON.stringify({
-
-                business_name:
-                  businessName,
-
-                location:
-                  location,
-
-                whatsapp_number:
-                  whatsapp,
-
-                delivery_information:
-                  delivery
-
-              })
-            }
-          );
-
-      }
-
-
-      if(!response.ok){
-
-        throw new Error(
-          await response.text()
-        );
-
-      }
-
-
-      showMessage(
-        "adminMessage",
-        "Business information saved successfully! 💾",
-        "success"
-      );
-
-
-    }catch(error){
-
-      showMessage(
-        "adminMessage",
-        "Could not save business information: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  /*
-   * ==========================================
-   * MESSAGE
-   * ==========================================
-   */
-
-  function showMessage(
-    elementId,
-    text,
-    type
-  ){
-
-    const element =
-      document.getElementById(
-        elementId
-      );
-
-
-    element.textContent =
-      text;
-
-
-    element.className =
-      "message " + type;
-
-
-    setTimeout(() => {
-
-      element.className =
-        "message";
-
-    },5000);
-
-  }
-
-
-  /*
-   * ==========================================
-   * HTML ESCAPE
-   * ==========================================
-   */
-
-  function escapeHTML(value){
-
-    return String(value)
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;")
-      .replace(/"/g,"&quot;")
-      .replace(/'/g,"&#039;");
-
-  }
-
-
-  /*
-   * ==========================================
-   * START
-   * ==========================================
-   */
-
-  checkLogin();
-
-</script>
-
-</body>
-</html>
+        error.me
