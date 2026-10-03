@@ -4,62 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>QzzCityRestaurant Admin</title>
-
 <style>
-*{box-sizing:border-box}
-body{font-family:Arial;margin:0;background:#f4f4f4;color:#111}
-header{background:#111;color:#fff;text-align:center;padding:20px;border-bottom:5px solid #ffd400}
-header h1{color:#ffd400;margin:0 0 5px}
-.box{max-width:900px;margin:20px auto;padding:15px}
-section,.login{background:#fff;padding:20px;margin-bottom:20px;border-radius:10px;box-shadow:0 2px 8px #ccc}
+*{box-sizing:border-box}body{font-family:Arial;margin:0;background:#f4f4f4;color:#111}
+header{background:#111;color:#fff;text-align:center;padding:18px;border-bottom:5px solid #ffd400}
+header h1{color:#ffd400;margin:0}.box,.login{max-width:850px;margin:15px auto;padding:15px}
+section,.login{background:#fff;padding:18px;margin-bottom:15px;border-radius:10px;box-shadow:0 2px 7px #ccc}
 input,select,textarea,button{width:100%;padding:12px;margin:6px 0;border-radius:6px;font-size:16px}
-input,select,textarea{border:1px solid #ccc}
-button{border:0;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.6;cursor:not-allowed}
-.loginBtn{background:#ffd400}
-.add{background:#20b15a;color:#fff}
-.save{background:#1769aa;color:#fff}
-.logout{background:#d93025;color:#fff;width:auto}
-.item{border:1px solid #ddd;padding:15px;margin:10px 0;border-radius:8px}
-.item button{width:auto;margin-right:5px}
-.price{background:#f0a500;color:#fff}
-.avail{background:#20b15a;color:#fff}
-.del{background:#d93025;color:#fff}
-.msg{padding:10px;margin:10px 0;border-radius:6px;font-weight:bold}
-.error{background:#fde2e0;color:#9d1c13}
-.ok{background:#dff5e7;color:#126b35}
-.hide{display:none}
-.center{text-align:center}
-.preview{
-  width:100%;
-  max-width:350px;
-  max-height:250px;
-  object-fit:cover;
-  border-radius:10px;
-  margin:10px 0;
-  display:none;
-  border:2px solid #ddd;
-}
-.menuImage{
-  width:100%;
-  max-width:350px;
-  max-height:220px;
-  object-fit:cover;
-  border-radius:10px;
-  margin:10px 0;
-}
-.photo-label{
-  display:block;
-  font-weight:bold;
-  margin-top:10px;
-}
-.small{
-  font-size:13px;
-  color:#666;
-}
+input,select,textarea{border:1px solid #ccc}button{border:0;font-weight:bold}
+.loginBtn{background:#ffd400}.add{background:#20b15a;color:#fff}.save{background:#1769aa;color:#fff}
+.logout{background:#d93025;color:#fff;width:auto;float:right}.item{border:1px solid #ddd;padding:12px;margin:10px 0;border-radius:8px}
+.item button{width:auto;margin:4px}.price{background:#f0a500;color:#fff}.avail{background:#20b15a;color:#fff}.del{background:#d93025;color:#fff}
+.msg{padding:10px;margin:8px 0;border-radius:6px;font-weight:bold}.error{background:#fde2e0;color:#9d1c13}.ok{background:#dff5e7;color:#126b35}
+.hide{display:none}.center{text-align:center}.preview,.menuImage{width:100%;max-width:330px;max-height:230px;object-fit:cover;border-radius:8px;margin:8px 0}
+.preview{display:none}.small{font-size:13px;color:#666}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -67,1045 +26,292 @@ button:disabled{opacity:.6;cursor:not-allowed}
 <p>Admin Panel • Menu Management</p>
 </header>
 
-<!-- LOGIN -->
-<div id="login" class="login" style="max-width:450px">
-
+<div id="login" class="login">
 <h2 class="center">🔐 Admin Login</h2>
-
 <div id="loginMsg"></div>
-
 <input id="email" type="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
-
 <button id="loginBtn" class="loginBtn">🔐 LOGIN</button>
-
 </div>
 
-
-<!-- ADMIN -->
 <div id="admin" class="box hide">
 
 <section>
-<strong>Logged in as:</strong>
-<span id="user"></span>
+<strong>Logged in as:</strong> <span id="user"></span>
 <button id="logout" class="logout">🚪 LOG OUT</button>
+<div style="clear:both"></div>
 </section>
 
 <div id="msg"></div>
 
-
-<!-- ADD MENU -->
 <section>
 <h2>➕ Add Menu Item</h2>
-
 <input id="name" placeholder="Food Name">
-
 <select id="category">
-<option>COMBO</option>
-<option>BURGER</option>
-<option>CHICKEN</option>
-<option>CHIPS</option>
-<option>OTHER</option>
+<option>COMBO</option><option>BURGER</option><option>CHICKEN</option><option>CHIPS</option><option>OTHER</option>
 </select>
-
-<input id="price" type="number" placeholder="Price (R)" min="0" step="0.01">
-
+<input id="price" type="number" min="0" step=".01" placeholder="Price (R)">
 <textarea id="description" placeholder="Description"></textarea>
-
-<label class="photo-label">📸 Menu Photo</label>
 <input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
-
-<p class="small">
-JPG, PNG or WebP • Maximum 5 MB
-</p>
-
-<img id="preview" class="preview" alt="Photo preview">
-
+<p class="small">JPG, PNG or WebP • Maximum 5 MB</p>
+<img id="preview" class="preview">
 <button id="add" class="add">➕ ADD MENU ITEM</button>
 </section>
 
-
-<!-- MENU -->
 <section>
 <h2>🍔 Current Menu</h2>
 <div id="menu">Loading...</div>
 </section>
 
-
-<!-- BUSINESS -->
 <section>
 <h2>📍 Business Information</h2>
-
 <input id="businessName" placeholder="Business Name">
 <input id="location" placeholder="Location">
 <input id="whatsapp" placeholder="WhatsApp Number">
 <input id="delivery" placeholder="Delivery Information">
-
 <button id="save" class="save">💾 SAVE BUSINESS INFORMATION</button>
 </section>
 
-
-<!-- WEBSITE -->
 <section>
 <h2>🌐 Customer Website</h2>
-
-<a href="./index.html" target="_blank">
-<button>🌐 OPEN CUSTOMER WEBSITE</button>
-</a>
+<a href="./index.html" target="_blank"><button>🌐 OPEN CUSTOMER WEBSITE</button></a>
 </section>
 
 </div>
 
-
 <script>
-
 const URL="https://namhbnphcrxjmgkbtqgs.supabase.co";
 const KEY="sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
-
 const BUCKET="menu-images";
-
 let session=null;
-
 const $=id=>document.getElementById(id);
 
-
-/* MESSAGE */
+function safe(x){return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 
 function message(id,text,error=false){
-  $(id).innerHTML=
-    '<div class="msg '+(error?'error':'ok')+'">'+safe(text)+'</div>';
+$(id).innerHTML='<div class="msg '+(error?"error":"ok")+'">'+safe(text)+'</div>';
 }
 
-
-/* API */
+async function refresh(){
+if(!session?.refresh_token)return false;
+try{
+let r=await fetch(URL+"/auth/v1/token?grant_type=refresh_token",{
+method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({refresh_token:session.refresh_token})
+});
+if(!r.ok)return false;
+let d=await r.json();
+if(!d.access_token)return false;
+session={...session,...d};
+localStorage.setItem("qzzcity_session",JSON.stringify(session));
+return true;
+}catch(e){return false}
+}
 
 async function api(path,opt={}){
-
-  if(!session){
-    throw Error("Please log in again.");
-  }
-
-  let r=await fetch(URL+path,{
-    ...opt,
-    headers:{
-      apikey:KEY,
-      Authorization:"Bearer "+session.access_token,
-      ...(opt.body && !(opt.body instanceof FormData)
-        ? {"Content-Type":"application/json"}
-        : {}),
-      ...(opt.headers||{})
-    }
-  });
-
-  /* Try refreshing the session if JWT expired */
-  if(r.status===401 || r.status===403){
-
-    let refreshed=await refreshSession();
-
-    if(refreshed){
-
-      r=await fetch(URL+path,{
-        ...opt,
-        headers:{
-          apikey:KEY,
-          Authorization:"Bearer "+session.access_token,
-          ...(opt.body && !(opt.body instanceof FormData)
-            ? {"Content-Type":"application/json"}
-            : {}),
-          ...(opt.headers||{})
-        }
-      });
-
-    }
-
-  }
-
-  return r;
+if(!session)throw Error("Please log in again.");
+let h={apikey:KEY,Authorization:"Bearer "+session.access_token};
+if(opt.body && !(opt.body instanceof File) && !(opt.body instanceof FormData))
+h["Content-Type"]="application/json";
+if(opt.headers)Object.assign(h,opt.headers);
+let r=await fetch(URL+path,{...opt,headers:h});
+if((r.status==401||r.status==403)&&await refresh()){
+h={apikey:KEY,Authorization:"Bearer "+session.access_token};
+if(opt.body && !(opt.body instanceof File) && !(opt.body instanceof FormData))
+h["Content-Type"]="application/json";
+if(opt.headers)Object.assign(h,opt.headers);
+r=await fetch(URL+path,{...opt,headers:h});
 }
-
-
-/* REFRESH SESSION */
-
-async function refreshSession(){
-
-  try{
-
-    if(!session || !session.refresh_token){
-      return false;
-    }
-
-    let r=await fetch(
-      URL+"/auth/v1/token?grant_type=refresh_token",
-      {
-        method:"POST",
-        headers:{
-          apikey:KEY,
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          refresh_token:session.refresh_token
-        })
-      }
-    );
-
-    if(!r.ok){
-      return false;
-    }
-
-    let data=await r.json();
-
-    if(!data.access_token){
-      return false;
-    }
-
-    session={
-      ...session,
-      ...data
-    };
-
-    localStorage.setItem(
-      "qzzcity_session",
-      JSON.stringify(session)
-    );
-
-    return true;
-
-  }catch(e){
-
-    return false;
-
-  }
-
+return r;
 }
-
-
-/* LOGIN */
 
 $("loginBtn").onclick=async()=>{
-
-  let email=$("email").value.trim();
-  let password=$("password").value;
-
-  if(!email||!password){
-    message("loginMsg","Enter your email and password.",true);
-    return;
-  }
-
-  $("loginBtn").disabled=true;
-  $("loginBtn").textContent="⏳ LOGGING IN...";
-
-  try{
-
-    let r=await fetch(
-      URL+"/auth/v1/token?grant_type=password",
-      {
-        method:"POST",
-        headers:{
-          apikey:KEY,
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          email,
-          password
-        })
-      }
-    );
-
-    let text=await r.text();
-    let data={};
-
-    try{
-      data=JSON.parse(text);
-    }catch(e){}
-
-    if(!r.ok)
-      throw Error(
-        data.error_description||
-        data.msg||
-        data.message||
-        text||
-        "Login failed"
-      );
-
-    if(!data.access_token)
-      throw Error("No login token received.");
-
-    session=data;
-
-    localStorage.setItem(
-      "qzzcity_session",
-      JSON.stringify(data)
-    );
-
-    showAdmin();
-
-  }catch(e){
-
-    message(
-      "loginMsg",
-      "Login failed: "+e.message,
-      true
-    );
-
-  }
-
-  $("loginBtn").disabled=false;
-  $("loginBtn").textContent="🔐 LOGIN";
-
+let email=$("email").value.trim(),password=$("password").value;
+if(!email||!password)return message("loginMsg","Enter email and password.",true);
+$("loginBtn").disabled=true;
+$("loginBtn").textContent="⏳ LOGGING IN...";
+try{
+let r=await fetch(URL+"/auth/v1/token?grant_type=password",{
+method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+});
+let t=await r.text(),d={};
+try{d=JSON.parse(t)}catch(e){}
+if(!r.ok)throw Error(d.error_description||d.message||t||"Login failed");
+session=d;
+localStorage.setItem("qzzcity_session",JSON.stringify(session));
+show();
+}catch(e){message("loginMsg","Login failed: "+e.message,true)}
+$("loginBtn").disabled=false;
+$("loginBtn").textContent="🔐 LOGIN";
 };
 
-
-/* SHOW ADMIN */
-
-function showAdmin(){
-
-  $("login").classList.add("hide");
-  $("admin").classList.remove("hide");
-
-  $("user").textContent=
-    session.user?.email||"Admin";
-
-  loadMenu();
-  loadBusiness();
-
+function show(){
+$("login").classList.add("hide");
+$("admin").classList.remove("hide");
+$("user").textContent=session.user?.email||"Admin";
+loadMenu();loadBusiness();
 }
-
-
-/* LOGOUT */
 
 $("logout").onclick=()=>{
-
-  session=null;
-
-  localStorage.removeItem(
-    "qzzcity_session"
-  );
-
-  $("admin").classList.add("hide");
-  $("login").classList.remove("hide");
-
+session=null;
+localStorage.removeItem("qzzcity_session");
+$("admin").classList.add("hide");
+$("login").classList.remove("hide");
 };
-
-
-/* PHOTO PREVIEW */
 
 $("photo").onchange=()=>{
-
-  let file=$("photo").files[0];
-
-  $("preview").style.display="none";
-
-  if(!file){
-    return;
-  }
-
-  if(!file.type.startsWith("image/")){
-    message(
-      "msg",
-      "Please choose an image file.",
-      true
-    );
-    $("photo").value="";
-    return;
-  }
-
-  if(file.size>5*1024*1024){
-    message(
-      "msg",
-      "Photo is too large. Maximum size is 5 MB.",
-      true
-    );
-    $("photo").value="";
-    return;
-  }
-
-  let reader=new FileReader();
-
-  reader.onload=e=>{
-    $("preview").src=e.target.result;
-    $("preview").style.display="block";
-  };
-
-  reader.readAsDataURL(file);
-
+let f=$("photo").files[0];
+$("preview").style.display="none";
+if(!f)return;
+if(!["image/jpeg","image/png","image/webp"].includes(f.type)||f.size>5242880){
+message("msg","Use JPG, PNG or WebP under 5 MB.",true);
+$("photo").value="";return;
+}
+let r=new FileReader();
+r.onload=e=>{$("preview").src=e.target.result;$("preview").style.display="block"};
+r.readAsDataURL(f);
 };
 
-
-/* UPLOAD PHOTO */
-
-async function uploadPhoto(file){
-
-  if(!file){
-    return null;
-  }
-
-  let extension=
-    file.name.split(".").pop().toLowerCase();
-
-  let safeExtension=
-    ["jpg","jpeg","png","webp"].includes(extension)
-      ? extension
-      : "jpg";
-
-  let filename=
-    Date.now()+"-"+Math.random()
-    .toString(36)
-    .substring(2,10)
-    +"."+safeExtension;
-
-  let path=filename;
-
-  let r=await api(
-    "/storage/v1/object/"+BUCKET+"/"+path,
-    {
-      method:"POST",
-      headers:{
-        "x-upsert":"false"
-      },
-      body:file
-    }
-  );
-
-  if(!r.ok){
-    throw Error(await r.text());
-  }
-
-  return URL+
-    "/storage/v1/object/public/"+
-    BUCKET+"/"+path;
-
+async function upload(f){
+if(!f)return null;
+let ext=f.type=="image/png"?"png":f.type=="image/webp"?"webp":"jpg";
+let path=Date.now()+"-"+Math.random().toString(36).slice(2)+ "."+ext;
+let r=await api("/storage/v1/object/"+BUCKET+"/"+path,{
+method:"POST",headers:{"x-upsert":"false"},body:f
+});
+if(!r.ok)throw Error(await r.text());
+return URL+"/storage/v1/object/public/"+BUCKET+"/"+path;
 }
-
-
-/* ADD MENU */
 
 $("add").onclick=async()=>{
-
-  let name=$("name").value.trim();
-  let category=$("category").value;
-  let price=Number($("price").value);
-  let description=$("description").value.trim();
-  let file=$("photo").files[0];
-
-  if(!name||isNaN(price)){
-    message(
-      "msg",
-      "Enter food name and valid price.",
-      true
-    );
-    return;
-  }
-
-  if(file){
-
-    if(!file.type.startsWith("image/")){
-      message(
-        "msg",
-        "Please choose an image file.",
-        true
-      );
-      return;
-    }
-
-    if(file.size>5*1024*1024){
-      message(
-        "msg",
-        "Photo is too large. Maximum size is 5 MB.",
-        true
-      );
-      return;
-    }
-
-  }
-
-  $("add").disabled=true;
-  $("add").textContent="⏳ ADDING ITEM...";
-
-  try{
-
-    let image_url=null;
-
-    /* Upload photo first */
-    if(file){
-
-      $("add").textContent="⏳ UPLOADING PHOTO...";
-
-      image_url=await uploadPhoto(file);
-
-    }
-
-    $("add").textContent="⏳ SAVING MENU ITEM...";
-
-    let r=await api(
-      "/rest/v1/menu_items",
-      {
-        method:"POST",
-        headers:{
-          Prefer:"return=minimal"
-        },
-        body:JSON.stringify({
-          name,
-          category,
-          price,
-          description,
-          image_url,
-          is_available:false
-        })
-      }
-    );
-
-    if(!r.ok){
-
-      /* If database insert fails after photo upload,
-         the photo can remain in storage safely. */
-      throw Error(await r.text());
-
-    }
-
-    $("name").value="";
-    $("price").value="";
-    $("description").value="";
-    $("photo").value="";
-    $("preview").src="";
-    $("preview").style.display="none";
-
-    message(
-      "msg",
-      "Menu item and photo added successfully! 🎉📸"
-    );
-
-    loadMenu();
-
-  }catch(e){
-
-    message(
-      "msg",
-      "Could not add item: "+e.message,
-      true
-    );
-
-  }
-
-  $("add").disabled=false;
-  $("add").textContent="➕ ADD MENU ITEM";
-
+let name=$("name").value.trim(),category=$("category").value;
+let price=Number($("price").value),description=$("description").value.trim();
+let f=$("photo").files[0];
+if(!name||isNaN(price)||price<0)return message("msg","Enter food name and valid price.",true);
+$("add").disabled=true;$("add").textContent="⏳ SAVING...";
+try{
+let image_url=await upload(f);
+let r=await api("/rest/v1/menu_items",{
+method:"POST",headers:{Prefer:"return=minimal"},
+body:JSON.stringify({name,category,price,description,image_url,is_available:false})
+});
+if(!r.ok)throw Error(await r.text());
+$("name").value="";$("price").value="";$("description").value="";$("photo").value="";
+$("preview").style.display="none";
+message("msg","Menu item added successfully! 🎉");
+loadMenu();
+}catch(e){message("msg","Could not add item: "+e.message,true)}
+$("add").disabled=false;$("add").textContent="➕ ADD MENU ITEM";
 };
-
-
-/* LOAD MENU */
 
 async function loadMenu(){
+$("menu").innerHTML="Loading menu...";
+try{
+let r=await api("/rest/v1/menu_items?select=*&order=id.asc");
+if(!r.ok)throw Error(await r.text());
+let items=await r.json();
+if(!items.length){$("menu").innerHTML="<p class='center'>No menu items yet.</p>";return}
+$("menu").innerHTML="";
+items.forEach(x=>{
+let d=document.createElement("div");d.className="item";
+let h=document.createElement("h3");h.textContent=x.name;d.appendChild(h);
+if(x.image_url){let i=document.createElement("img");i.src=x.image_url;i.className="menuImage";d.appendChild(i)}
+let p=document.createElement("p");p.textContent=(x.category||"OTHER")+" • R"+Number(x.price||0).toFixed(2);d.appendChild(p);
+let s=document.createElement("strong");s.textContent=x.is_available?"🟢 AVAILABLE":"🔴 UNAVAILABLE";d.appendChild(s);
+d.appendChild(document.createElement("br"));
 
-  $("menu").innerHTML="Loading menu...";
-
-  try{
-
-    let r=await api(
-      "/rest/v1/menu_items?select=*&order=id.asc"
-    );
-
-    if(!r.ok)
-      throw Error(await r.text());
-
-    let items=await r.json();
-
-    if(!items.length){
-
-      $("menu").innerHTML=
-        "<p class='center'>No menu items yet.</p>";
-
-      return;
-
-    }
-
-    $("menu").innerHTML="";
-
-    items.forEach(x=>{
-
-      let available=
-        x.is_available===true;
-
-      let div=
-        document.createElement("div");
-
-      div.className="item";
-
-      let title=
-        document.createElement("h3");
-
-      title.textContent=
-        x.name||"Menu Item";
-
-      div.appendChild(title);
-
-
-      /* IMAGE */
-
-      if(x.image_url){
-
-        let img=
-          document.createElement("img");
-
-        img.className="menuImage";
-        img.src=x.image_url;
-        img.alt=x.name||"Menu item";
-        img.loading="lazy";
-
-        div.appendChild(img);
-
-      }
-
-
-      let info=
-        document.createElement("p");
-
-      info.textContent=
-        (x.category||"OTHER")+
-        " • R"+
-        Number(x.price||0).toFixed(2);
-
-      div.appendChild(info);
-
-
-      let desc=
-        document.createElement("p");
-
-      desc.textContent=
-        x.description||"";
-
-      div.appendChild(desc);
-
-
-      let status=
-        document.createElement("strong");
-
-      status.textContent=
-        available
-          ?"🟢 AVAILABLE"
-          :"🔴 UNAVAILABLE";
-
-      div.appendChild(status);
-
-      div.appendChild(
-        document.createElement("br")
-      );
-
-
-      let priceBtn=
-        document.createElement("button");
-
-      priceBtn.className="price";
-      priceBtn.textContent=
-        "💰 CHANGE PRICE";
-
-      priceBtn.onclick=()=>{
-        changePrice(x.id,x.price);
-      };
-
-
-      let availBtn=
-        document.createElement("button");
-
-      availBtn.className="avail";
-
-      availBtn.textContent=
-        available
-          ?"🔴 MARK UNAVAILABLE"
-          :"🟢 MARK AVAILABLE";
-
-      availBtn.onclick=()=>{
-        toggle(x.id,available);
-      };
-
-
-      let delBtn=
-        document.createElement("button");
-
-      delBtn.className="del";
-      delBtn.textContent=
-        "🗑️ DELETE";
-
-      delBtn.onclick=()=>{
-        removeItem(x.id,x.image_url);
-      };
-
-
-      div.append(
-        priceBtn,
-        availBtn,
-        delBtn
-      );
-
-      $("menu").appendChild(div);
-
-    });
-
-  }catch(e){
-
-    $("menu").innerHTML=
-      "<p class='msg error'>Could not load menu:<br>"+
-      safe(e.message)+
-      "</p>";
-
-  }
-
+let b=document.createElement("button");b.className="price";b.textContent="💰 CHANGE PRICE";b.onclick=()=>changePrice(x.id,x.price);
+let a=document.createElement("button");a.className="avail";a.textContent=x.is_available?"🔴 MARK UNAVAILABLE":"🟢 MARK AVAILABLE";a.onclick=()=>toggle(x.id,x.is_available);
+let del=document.createElement("button");del.className="del";del.textContent="🗑️ DELETE";del.onclick=()=>remove(x.id,x.image_url);
+d.append(b,a,del);$("menu").appendChild(d);
+});
+}catch(e){$("menu").innerHTML="<div class='msg error'>Could not load menu:<br>"+safe(e.message)+"</div>"}
 }
-
-
-/* CHANGE PRICE */
 
 async function changePrice(id,old){
-
-  let value=
-    prompt("New price (R):",old);
-
-  if(value===null)return;
-
-  let price=Number(value);
-
-  if(isNaN(price)||price<0){
-
-    alert("Enter a valid price.");
-    return;
-
-  }
-
-  try{
-
-    let r=await api(
-      "/rest/v1/menu_items?id=eq."+id,
-      {
-        method:"PATCH",
-        headers:{
-          Prefer:"return=minimal"
-        },
-        body:JSON.stringify({
-          price
-        })
-      }
-    );
-
-    if(!r.ok)
-      throw Error(await r.text());
-
-    message(
-      "msg",
-      "Price updated! 💰"
-    );
-
-    loadMenu();
-
-  }catch(e){
-
-    message(
-      "msg",
-      "Could not update price: "+e.message,
-      true
-    );
-
-  }
-
+let v=prompt("New price (R):",old);if(v===null)return;
+let price=Number(v);if(isNaN(price)||price<0)return alert("Enter a valid price.");
+try{
+let r=await api("/rest/v1/menu_items?id=eq."+encodeURIComponent(id),{
+method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({price})
+});
+if(!r.ok)throw Error(await r.text());
+message("msg","Price updated! 💰");loadMenu();
+}catch(e){message("msg","Could not update price: "+e.message,true)}
 }
-
-
-/* AVAILABILITY */
 
 async function toggle(id,current){
-
-  try{
-
-    let r=await api(
-      "/rest/v1/menu_items?id=eq."+id,
-      {
-        method:"PATCH",
-        headers:{
-          Prefer:"return=minimal"
-        },
-        body:JSON.stringify({
-          is_available:!current
-        })
-      }
-    );
-
-    if(!r.ok)
-      throw Error(await r.text());
-
-    message(
-      "msg",
-      "Availability updated! ✅"
-    );
-
-    loadMenu();
-
-  }catch(e){
-
-    message(
-      "msg",
-      "Could not update availability: "+e.message,
-      true
-    );
-
-  }
-
+try{
+let r=await api("/rest/v1/menu_items?id=eq."+encodeURIComponent(id),{
+method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({is_available:!current})
+});
+if(!r.ok)throw Error(await r.text());
+message("msg","Availability updated! ✅");loadMenu();
+}catch(e){message("msg","Could not update availability: "+e.message,true)}
 }
 
-
-/* DELETE PHOTO */
-
-async function deletePhoto(imageUrl){
-
-  if(!imageUrl){
-    return;
-  }
-
-  try{
-
-    let marker=
-      "/storage/v1/object/public/"+
-      BUCKET+"/";
-
-    let index=
-      imageUrl.indexOf(marker);
-
-    if(index===-1){
-      return;
-    }
-
-    let path=
-      imageUrl.substring(
-        index+marker.length
-      );
-
-    await api(
-      "/storage/v1/object/"+
-      BUCKET+"/"+
-      path,
-      {
-        method:"DELETE"
-      }
-    );
-
-  }catch(e){
-
-    console.log(
-      "Photo delete warning:",
-      e
-    );
-
-  }
-
+async function remove(id,image){
+if(!confirm("Delete this menu item?"))return;
+try{
+let r=await api("/rest/v1/menu_items?id=eq."+encodeURIComponent(id),{method:"DELETE"});
+if(!r.ok)throw Error(await r.text());
+message("msg","Menu item deleted.");loadMenu();
+}catch(e){message("msg","Could not delete item: "+e.message,true)}
 }
-
-
-/* DELETE MENU ITEM */
-
-async function removeItem(id,imageUrl){
-
-  if(!confirm("Delete this menu item?"))
-    return;
-
-  try{
-
-    let r=await api(
-      "/rest/v1/menu_items?id=eq."+id,
-      {
-        method:"DELETE"
-      }
-    );
-
-    if(!r.ok)
-      throw Error(await r.text());
-
-    await deletePhoto(imageUrl);
-
-    message(
-      "msg",
-      "Menu item deleted."
-    );
-
-    loadMenu();
-
-  }catch(e){
-
-    message(
-      "msg",
-      "Could not delete item: "+e.message,
-      true
-    );
-
-  }
-
-}
-
-
-/* BUSINESS INFO */
 
 async function loadBusiness(){
-
-  try{
-
-    let r=await api(
-      "/rest/v1/business_settings?select=*&limit=1"
-    );
-
-    if(!r.ok)return;
-
-    let data=await r.json();
-
-    if(data.length){
-
-      let x=data[0];
-
-      $("businessName").value=
-        x.business_name||"";
-
-      $("location").value=
-        x.location||"";
-
-      $("whatsapp").value=
-        x.whatsapp_number||"";
-
-      $("delivery").value=
-        x.delivery_information||"";
-
-    }
-
-  }catch(e){
-
-    console.log(e);
-
-  }
-
+try{
+let r=await api("/rest/v1/business_settings?select=*&limit=1");
+if(!r.ok)return;
+let d=await r.json();
+if(d.length){
+let x=d[0];
+$("businessName").value=x.business_name||"";
+$("location").value=x.location||"";
+$("whatsapp").value=x.whatsapp_number||"";
+$("delivery").value=x.delivery_information||"";
 }
-
-
-/* SAVE BUSINESS */
+}catch(e){}
+}
 
 $("save").onclick=async()=>{
-
-  let body={
-    business_name:
-      $("businessName").value.trim(),
-
-    location:
-      $("location").value.trim(),
-
-    whatsapp_number:
-      $("whatsapp").value.trim(),
-
-    delivery_information:
-      $("delivery").value.trim()
-  };
-
-  try{
-
-    let check=await api(
-      "/rest/v1/business_settings?select=id&limit=1"
-    );
-
-    if(!check.ok)
-      throw Error(await check.text());
-
-    let data=await check.json();
-    let r;
-
-    if(data.length){
-
-      r=await api(
-        "/rest/v1/business_settings?id=eq."+
-        data[0].id,
-        {
-          method:"PATCH",
-          headers:{
-            Prefer:"return=minimal"
-          },
-          body:JSON.stringify(body)
-        }
-      );
-
-    }else{
-
-      r=await api(
-        "/rest/v1/business_settings",
-        {
-          method:"POST",
-          headers:{
-            Prefer:"return=minimal"
-          },
-          body:JSON.stringify(body)
-        }
-      );
-
-    }
-
-    if(!r.ok)
-      throw Error(await r.text());
-
-    message(
-      "msg",
-      "Business information saved! 💾"
-    );
-
-  }catch(e){
-
-    message(
-      "msg",
-      "Could not save: "+e.message,
-      true
-    );
-
-  }
-
+let body={
+business_name:$("businessName").value.trim(),
+location:$("location").value.trim(),
+whatsapp_number:$("whatsapp").value.trim(),
+delivery_information:$("delivery").value.trim()
+};
+$("save").disabled=true;
+try{
+let c=await api("/rest/v1/business_settings?select=id&limit=1");
+if(!c.ok)throw Error(await c.text());
+let d=await c.json(),r;
+if(d.length){
+r=await api("/rest/v1/business_settings?id=eq."+encodeURIComponent(d[0].id),{
+method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify(body)
+});
+}else{
+r=await api("/rest/v1/business_settings",{
+method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(body)
+});
+}
+if(!r.ok)throw Error(await r.text());
+message("msg","Business information saved! 💾");
+}catch(e){message("msg","Could not save: "+e.message,true)}
+$("save").disabled=false;
 };
 
-
-/* SECURITY */
-
-function safe(x){
-
-  return String(x)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-/* REMEMBER LOGIN */
-
+(async()=>{
 try{
-
-  let saved=
-    localStorage.getItem(
-      "qzzcity_session"
-    );
-
-  if(saved){
-
-    let s=JSON.parse(saved);
-
-    if(s&&s.access_token){
-
-      session=s;
-
-      showAdmin();
-
-    }
-
-  }
-
-}catch(e){
-
-  localStorage.removeItem(
-    "qzzcity_session"
-  );
-
+let s=JSON.parse(localStorage.getItem("qzzcity_session")||"null");
+if(s?.access_token){
+session=s;
+if(s.refresh_token)await refresh();
+if(session)show();
 }
-
+}catch(e){localStorage.removeItem("qzzcity_session")}
+})();
 </script>
-
 </body>
   </html>
-  
