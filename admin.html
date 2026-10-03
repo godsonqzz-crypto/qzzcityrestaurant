@@ -1,1280 +1,577 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QzzCityRestaurant Admin</title>
 
-  <title>QzzCityRestaurant Admin</title>
-
-  <style>
-    :root {
-      --yellow: #ffd400;
-      --black: #111;
-      --white: #fff;
-      --gray: #f4f4f4;
-      --green: #20b15a;
-      --red: #d93025;
-      --blue: #1769aa;
-      --orange: #f0a500;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--gray);
-      color: var(--black);
-    }
-
-    header {
-      background: var(--black);
-      color: white;
-      padding: 22px 15px;
-      text-align: center;
-      border-bottom: 6px solid var(--yellow);
-    }
-
-    header h1 {
-      color: var(--yellow);
-      font-size: 30px;
-      margin-bottom: 6px;
-    }
-
-    header p {
-      font-size: 15px;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px 15px 40px;
-    }
-
-    .topbar {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .user {
-      font-size: 14px;
-      color: #555;
-    }
-
-    button,
-    .button-link {
-      border: 0;
-      border-radius: 7px;
-      padding: 11px 15px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .logout {
-      background: var(--red);
-      color: white;
-    }
-
-    .section {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08);
-    }
-
-    .section h2 {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin: 12px 0 6px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 7px;
-      font-size: 16px;
-    }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .add-btn {
-      margin-top: 15px;
-      background: var(--green);
-      color: white;
-      width: 100%;
-    }
-
-    .save-btn {
-      margin-top: 15px;
-      background: var(--blue);
-      color: white;
-      width: 100%;
-    }
-
-    .menu-item {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 12px;
-      background: white;
-    }
-
-    .menu-item h3 {
-      margin-bottom: 6px;
-    }
-
-    .menu-meta {
-      color: #666;
-      margin-bottom: 10px;
-    }
-
-    .status {
-      font-weight: bold;
-      margin: 12px 0;
-    }
-
-    .available {
-      color: var(--green);
-    }
-
-    .unavailable {
-      color: var(--red);
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .price-btn {
-      background: var(--orange);
-      color: white;
-    }
-
-    .availability-btn {
-      background: var(--green);
-      color: white;
-    }
-
-    .delete-btn {
-      background: var(--red);
-      color: white;
-    }
-
-    .website-btn {
-      background: var(--black);
-      color: var(--yellow);
-      width: 100%;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .message {
-      display: none;
-      padding: 12px;
-      border-radius: 7px;
-      margin-bottom: 15px;
-      font-weight: bold;
-      word-break: break-word;
-    }
-
-    .success {
-      display: block;
-      background: #dff5e7;
-      color: #126b35;
-    }
-
-    .error {
-      display: block;
-      background: #fde2e0;
-      color: #9d1c13;
-    }
-
-    .login-box {
-      max-width: 450px;
-      margin: 50px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 3px 15px rgba(0,0,0,.12);
-    }
-
-    .login-box h2 {
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .login-btn {
-      width: 100%;
-      margin-top: 15px;
-      background: var(--yellow);
-      color: var(--black);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .empty {
-      text-align: center;
-      color: #666;
-      padding: 20px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #555;
-    }
-
-    .debug {
-      margin-top: 12px;
-      padding: 12px;
-      background: #fff3cd;
-      border: 1px solid #ffe69c;
-      border-radius: 7px;
-      font-size: 13px;
-      word-break: break-word;
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial;margin:0;background:#f4f4f4;color:#111}
+header{background:#111;color:#fff;text-align:center;padding:20px;border-bottom:5px solid #ffd400}
+header h1{color:#ffd400;margin:0 0 5px}
+.box{max-width:900px;margin:20px auto;padding:15px}
+section,.login{background:#fff;padding:20px;margin-bottom:20px;border-radius:10px;box-shadow:0 2px 8px #ccc}
+input,select,textarea,button{width:100%;padding:12px;margin:6px 0;border-radius:6px;font-size:16px}
+input,select,textarea{border:1px solid #ccc}
+button{border:0;font-weight:bold;cursor:pointer}
+.loginBtn{background:#ffd400}
+.add{background:#20b15a;color:#fff}
+.save{background:#1769aa;color:#fff}
+.logout{background:#d93025;color:#fff;width:auto}
+.item{border:1px solid #ddd;padding:15px;margin:10px 0;border-radius:8px}
+.item button{width:auto;margin-right:5px}
+.price{background:#f0a500;color:#fff}
+.avail{background:#20b15a;color:#fff}
+.del{background:#d93025;color:#fff}
+.msg{padding:10px;margin:10px 0;border-radius:6px;font-weight:bold}
+.error{background:#fde2e0;color:#9d1c13}
+.ok{background:#dff5e7;color:#126b35}
+.hide{display:none}
+.center{text-align:center}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>QzzCityRestaurant</h1>
-  <p>Admin Panel • Menu Management</p>
+<h1>QzzCityRestaurant</h1>
+<p>Admin Panel • Menu Management</p>
 </header>
 
-
 <!-- LOGIN -->
+<div id="login" class="login" style="max-width:450px">
 
-<div id="loginScreen" class="login-box">
+<h2 class="center">🔐 Admin Login</h2>
 
-  <h2>🔐 Admin Login</h2>
+<div id="loginMsg"></div>
 
-  <div id="loginMessage" class="message"></div>
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-  <label for="loginEmail">Email</label>
-
-  <input
-    type="email"
-    id="loginEmail"
-    placeholder="Your email"
-    autocomplete="email"
-  >
-
-  <label for="loginPassword">Password</label>
-
-  <input
-    type="password"
-    id="loginPassword"
-    placeholder="Your password"
-    autocomplete="current-password"
-  >
-
-  <button
-    type="button"
-    id="loginButton"
-    class="login-btn"
-  >
-    🔐 LOGIN
-  </button>
+<button id="loginBtn" class="loginBtn">🔐 LOGIN</button>
 
 </div>
 
 
 <!-- ADMIN -->
+<div id="admin" class="box hide">
 
-<div id="adminScreen" class="container hidden">
+<section>
+<strong>Logged in as:</strong>
+<span id="user"></span>
+<button id="logout" class="logout">🚪 LOG OUT</button>
+</section>
 
-  <div class="topbar">
-
-    <div class="user">
-      <strong>Logged in as:</strong>
-      <span id="userEmail"></span>
-    </div>
-
-    <button
-      type="button"
-      id="logoutButton"
-      class="logout"
-    >
-      🚪 LOG OUT
-    </button>
-
-  </div>
+<div id="msg"></div>
 
 
-  <div id="adminMessage" class="message"></div>
+<!-- ADD MENU -->
+<section>
+<h2>➕ Add Menu Item</h2>
+
+<input id="name" placeholder="Food Name">
+
+<select id="category">
+<option>COMBO</option>
+<option>BURGER</option>
+<option>CHICKEN</option>
+<option>CHIPS</option>
+<option>OTHER</option>
+</select>
+
+<input id="price" type="number" placeholder="Price (R)" min="0">
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<button id="add" class="add">➕ ADD MENU ITEM</button>
+</section>
 
 
-  <!-- ADD MENU ITEM -->
-
-  <div class="section">
-
-    <h2>➕ Add Menu Item</h2>
-
-    <p>
-      Add a new food item. It will be stored in Supabase
-      and can appear on the customer website.
-    </p>
-
-    <label for="foodName">Food Name</label>
-
-    <input
-      type="text"
-      id="foodName"
-      placeholder="Example: Cheese Burger"
-    >
-
-    <label for="foodCategory">Category</label>
-
-    <select id="foodCategory">
-      <option value="COMBO">COMBO</option>
-      <option value="BURGER">BURGER</option>
-      <option value="CHICKEN">CHICKEN</option>
-      <option value="CHIPS">CHIPS</option>
-      <option value="OTHER">OTHER</option>
-    </select>
-
-    <label for="foodPrice">Price (R)</label>
-
-    <input
-      type="number"
-      id="foodPrice"
-      placeholder="20"
-      min="0"
-      step="0.01"
-    >
-
-    <label for="foodDescription">Description</label>
-
-    <textarea
-      id="foodDescription"
-      placeholder="Describe the food item"
-    ></textarea>
-
-    <button
-      type="button"
-      id="addMenuButton"
-      class="add-btn"
-    >
-      ➕ ADD MENU ITEM
-    </button>
-
-  </div>
+<!-- MENU -->
+<section>
+<h2>🍔 Current Menu</h2>
+<div id="menu">Loading...</div>
+</section>
 
 
-  <!-- CURRENT MENU -->
+<!-- BUSINESS -->
+<section>
+<h2>📍 Business Information</h2>
 
-  <div class="section">
+<input id="businessName" placeholder="Business Name">
+<input id="location" placeholder="Location">
+<input id="whatsapp" placeholder="WhatsApp Number">
+<input id="delivery" placeholder="Delivery Information">
 
-    <h2>🍔 Current Menu</h2>
-
-    <div id="menuList">
-      <div class="loading">
-        Loading menu...
-      </div>
-    </div>
-
-  </div>
+<button id="save" class="save">💾 SAVE BUSINESS INFORMATION</button>
+</section>
 
 
-  <!-- BUSINESS INFORMATION -->
+<!-- WEBSITE -->
+<section>
+<h2>🌐 Customer Website</h2>
 
-  <div class="section">
-
-    <h2>📍 Business Information</h2>
-
-    <label for="businessName">Business Name</label>
-
-    <input
-      type="text"
-      id="businessName"
-      placeholder="QzzCityRestaurant"
-    >
-
-    <label for="businessLocation">Location</label>
-
-    <input
-      type="text"
-      id="businessLocation"
-      placeholder="Hammarsdale, Mpumalanga Unit 3"
-    >
-
-    <label for="businessWhatsApp">WhatsApp Number</label>
-
-    <input
-      type="text"
-      id="businessWhatsApp"
-      placeholder="071 538 2395"
-    >
-
-    <label for="businessDelivery">Delivery Information</label>
-
-    <input
-      type="text"
-      id="businessDelivery"
-      placeholder="Delivery is Free!!"
-    >
-
-    <button
-      type="button"
-      id="saveBusinessButton"
-      class="save-btn"
-    >
-      💾 SAVE BUSINESS INFORMATION
-    </button>
-
-  </div>
-
-
-  <!-- CUSTOMER WEBSITE -->
-
-  <div class="section">
-
-    <h2>🌐 Customer Website</h2>
-
-    <p>
-      Open your public QzzCityRestaurant website.
-    </p>
-
-    <a
-      class="button-link website-btn"
-      href="./index.html"
-      target="_blank"
-    >
-      🌐 OPEN CUSTOMER WEBSITE
-    </a>
-
-  </div>
+<a href="./index.html" target="_blank">
+<button>🌐 OPEN CUSTOMER WEBSITE</button>
+</a>
+</section>
 
 </div>
 
 
 <script>
 
-"use strict";
+const URL="https://namhbnphcrxjmgkbtqgs.supabase.co";
+const KEY="sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
 
+let session=null;
 
-/* =========================================
-   SUPABASE SETTINGS
-========================================= */
+const $=id=>document.getElementById(id);
 
-const SUPABASE_URL =
-  "https://namhbnphcrxjmgkbtqgs.supabase.co";
+function message(id,text,error=false){
+$(id).innerHTML='<div class="msg '+(error?'error':'ok')+'">'+text+'</div>';
+}
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_ih6Pt7CbuGlDRV3p5jZwMQ_NcA9J7tK";
+async function api(path,opt={}){
+if(!session)throw Error("Please log in again.");
 
-
-let currentSession = null;
-
-
-/* =========================================
-   HELPER
-========================================= */
-
-async function supabaseRequest(endpoint, options = {}) {
-
-  if (!currentSession || !currentSession.access_token) {
-    throw new Error(
-      "Admin session is missing. Please log in again."
-    );
-  }
-
-  const headers = {
-    "apikey": SUPABASE_PUBLISHABLE_KEY,
-    "Authorization":
-      "Bearer " + currentSession.access_token,
-    "Content-Type": "application/json",
-    ...(options.headers || {})
-  };
-
-  return fetch(
-    SUPABASE_URL + endpoint,
-    {
-      ...options,
-      headers: headers
-    }
-  );
+return fetch(URL+path,{
+...opt,
+headers:{
+apikey:KEY,
+Authorization:"Bearer "+session.access_token,
+"Content-Type":"application/json",
+...(opt.headers||{})
+}
+});
 }
 
 
-/* =========================================
-   LOGIN
-========================================= */
+/* LOGIN */
 
-async function doLogin() {
+$("loginBtn").onclick=async()=>{
 
-  const email =
-    document.getElementById("loginEmail").value.trim();
+let email=$("email").value.trim();
+let password=$("password").value;
 
-  const password =
-    document.getElementById("loginPassword").value;
+if(!email||!password){
+message("loginMsg","Enter your email and password.",true);
+return;
+}
 
+$("loginBtn").disabled=true;
+$("loginBtn").textContent="⏳ LOGGING IN...";
 
-  if (!email || !password) {
+try{
 
-    showMessage(
-      "loginMessage",
-      "Please enter your email and password.",
-      "error"
-    );
+let r=await fetch(
+URL+"/auth/v1/token?grant_type=password",
+{
+method:"POST",
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({email,password})
+});
 
-    return;
-  }
+let text=await r.text();
+let data={};
 
+try{data=JSON.parse(text)}catch(e){}
 
-  const button =
-    document.getElementById("loginButton");
+if(!r.ok)
+throw Error(
+data.error_description||
+data.msg||
+data.message||
+text||
+"Login failed"
+);
 
-  button.disabled = true;
-  button.textContent = "⏳ LOGGING IN...";
+if(!data.access_token)
+throw Error("No login token received.");
 
+session=data;
 
-  try {
+localStorage.setItem(
+"qzzcity_session",
+JSON.stringify(data)
+);
 
-    showMessage(
-      "loginMessage",
-      "Connecting to Supabase...",
-      "success"
-    );
+showAdmin();
 
+}catch(e){
 
-    const response = await fetch(
-      SUPABASE_URL +
-      "/auth/v1/token?grant_type=password",
-      {
-        method: "POST",
+message("loginMsg","Login failed: "+e.message,true);
 
-        headers: {
-          "apikey": SUPABASE_PUBLISHABLE_KEY,
-          "Content-Type": "application/json"
-        },
+}
 
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
-      }
-    );
+$("loginBtn").disabled=false;
+$("loginBtn").textContent="🔐 LOGIN";
 
-
-    const text =
-      await response.text();
-
-
-    let data = {};
-
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      data = {};
-    }
+};
 
 
-    if (!response.ok) {
+/* SHOW ADMIN */
 
-      throw new Error(
-        data.error_description ||
-        data.msg ||
-        data.message ||
-        text ||
-        "Login failed."
-      );
-    }
+function showAdmin(){
 
+$("login").classList.add("hide");
+$("admin").classList.remove("hide");
 
-    if (!data.access_token) {
+$("user").textContent=session.user?.email||"Admin";
 
-      throw new Error(
-        "Supabase did not return an access token."
-      );
-    }
-
-
-    currentSession = data;
-
-
-    localStorage.setItem(
-      "qzzcity_session",
-      JSON.stringify(data)
-    );
-
-
-    showAdmin();
-
-  }
-
-  catch (error) {
-
-    console.error("LOGIN ERROR:", error);
-
-    showMessage(
-      "loginMessage",
-      "Login failed: " + error.message,
-      "error"
-    );
-
-  }
-
-  finally {
-
-    button.disabled = false;
-    button.textContent = "🔐 LOGIN";
-
-  }
+loadMenu();
+loadBusiness();
 
 }
 
 
-/* =========================================
-   SHOW ADMIN
-========================================= */
+/* LOGOUT */
 
-function showAdmin() {
+$("logout").onclick=()=>{
 
-  document
-    .getElementById("loginScreen")
-    .classList.add("hidden");
+session=null;
+localStorage.removeItem("qzzcity_session");
 
+$("admin").classList.add("hide");
+$("login").classList.remove("hide");
 
-  document
-    .getElementById("adminScreen")
-    .classList.remove("hidden");
+};
 
 
-  document
-    .getElementById("userEmail")
-    .textContent =
-      currentSession?.user?.email ||
-      "Admin";
+/* ADD MENU */
+
+$("add").onclick=async()=>{
+
+let name=$("name").value.trim();
+let category=$("category").value;
+let price=Number($("price").value);
+let description=$("description").value.trim();
+
+if(!name||isNaN(price)){
+message("msg","Enter food name and valid price.",true);
+return;
+}
+
+try{
+
+let r=await api("/rest/v1/menu_items",{
+method:"POST",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({
+name,
+category,
+price,
+description,
+is_available:false
+})
+});
+
+if(!r.ok)throw Error(await r.text());
+
+$("name").value="";
+$("price").value="";
+$("description").value="";
+
+message("msg","Menu item added successfully! 🎉");
+loadMenu();
+
+}catch(e){
+message("msg","Could not add item: "+e.message,true);
+}
+
+};
 
 
-  loadMenu();
+/* LOAD MENU */
 
-  loadBusinessInformation();
+async function loadMenu(){
+
+$("menu").innerHTML="Loading menu...";
+
+try{
+
+let r=await api(
+"/rest/v1/menu_items?select=*&order=id.asc"
+);
+
+if(!r.ok)throw Error(await r.text());
+
+let items=await r.json();
+
+if(!items.length){
+$("menu").innerHTML="<p class='center'>No menu items yet.</p>";
+return;
+}
+
+$("menu").innerHTML="";
+
+items.forEach(x=>{
+
+let available=x.is_available===true;
+
+let div=document.createElement("div");
+div.className="item";
+
+div.innerHTML=
+"<h3>"+safe(x.name||"Menu Item")+"</h3>"+
+"<p>"+safe(x.category||"OTHER")+" • R"+Number(x.price||0).toFixed(2)+"</p>"+
+"<p>"+safe(x.description||"")+"</p>"+
+"<strong>"+(available?"🟢 AVAILABLE":"🔴 UNAVAILABLE")+"</strong><br>";
+
+let priceBtn=document.createElement("button");
+priceBtn.className="price";
+priceBtn.textContent="💰 CHANGE PRICE";
+priceBtn.onclick=()=>changePrice(x.id,x.price);
+
+let availBtn=document.createElement("button");
+availBtn.className="avail";
+availBtn.textContent=available?"🔴 MARK UNAVAILABLE":"🟢 MARK AVAILABLE";
+availBtn.onclick=()=>toggle(x.id,available);
+
+let delBtn=document.createElement("button");
+delBtn.className="del";
+delBtn.textContent="🗑️ DELETE";
+delBtn.onclick=()=>removeItem(x.id);
+
+div.append(priceBtn,availBtn,delBtn);
+
+$("menu").appendChild(div);
+
+});
+
+}catch(e){
+
+$("menu").innerHTML=
+"<p class='msg error'>Could not load menu:<br>"+safe(e.message)+"</p>";
+
+}
 
 }
 
 
-/* =========================================
-   LOGOUT
-========================================= */
+/* CHANGE PRICE */
 
-function doLogout() {
+async function changePrice(id,old){
 
-  currentSession = null;
+let value=prompt("New price (R):",old);
 
-  localStorage.removeItem(
-    "qzzcity_session"
-  );
+if(value===null)return;
 
+let price=Number(value);
 
-  document
-    .getElementById("adminScreen")
-    .classList.add("hidden");
+if(isNaN(price)||price<0){
+alert("Enter a valid price.");
+return;
+}
 
+try{
 
-  document
-    .getElementById("loginScreen")
-    .classList.remove("hidden");
+let r=await api(
+"/rest/v1/menu_items?id=eq."+id,
+{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({price})
+});
 
+if(!r.ok)throw Error(await r.text());
 
-  document
-    .getElementById("loginEmail")
-    .value = "";
+message("msg","Price updated! 💰");
+loadMenu();
 
-  document
-    .getElementById("loginPassword")
-    .value = "";
+}catch(e){
+message("msg","Could not update price: "+e.message,true);
+}
 
 }
 
 
-/* =========================================
-   CHECK SAVED LOGIN
-========================================= */
+/* AVAILABILITY */
 
-function checkLogin() {
+async function toggle(id,current){
 
-  const saved =
-    localStorage.getItem(
-      "qzzcity_session"
-    );
+try{
 
+let r=await api(
+"/rest/v1/menu_items?id=eq."+id,
+{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({is_available:!current})
+});
 
-  if (!saved) {
-    return;
-  }
+if(!r.ok)throw Error(await r.text());
 
+message("msg","Availability updated! ✅");
+loadMenu();
 
-  try {
-
-    const session =
-      JSON.parse(saved);
-
-
-    if (
-      !session ||
-      !session.access_token
-    ) {
-      throw new Error("Invalid session");
-    }
-
-
-    currentSession = session;
-
-    showAdmin();
-
-  }
-
-  catch (error) {
-
-    console.log(
-      "Saved session invalid."
-    );
-
-    localStorage.removeItem(
-      "qzzcity_session"
-    );
-
-    currentSession = null;
-
-  }
+}catch(e){
+message("msg","Could not update availability: "+e.message,true);
+}
 
 }
 
 
-/* =========================================
-   ADD MENU ITEM
-========================================= */
+/* DELETE */
 
-async function addMenuItem() {
+async function removeItem(id){
 
-  const name =
-    document
-      .getElementById("foodName")
-      .value
-      .trim();
+if(!confirm("Delete this menu item?"))return;
 
-  const category =
-    document
-      .getElementById("foodCategory")
-      .value;
+try{
 
-  const priceText =
-    document
-      .getElementById("foodPrice")
-      .value;
+let r=await api(
+"/rest/v1/menu_items?id=eq."+id,
+{method:"DELETE"}
+);
 
-  const description =
-    document
-      .getElementById("foodDescription")
-      .value
-      .trim();
+if(!r.ok)throw Error(await r.text());
 
+message("msg","Menu item deleted.");
+loadMenu();
 
-  if (!name || priceText === "") {
-
-    showMessage(
-      "adminMessage",
-      "Please enter the food name and price.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  const price =
-    Number(priceText);
-
-
-  if (
-    Number.isNaN(price) ||
-    price < 0
-  ) {
-
-    showMessage(
-      "adminMessage",
-      "Please enter a valid price.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await supabaseRequest(
-        "/rest/v1/menu_items",
-        {
-          method: "POST",
-
-          headers: {
-            "Prefer":
-              "return=representation"
-          },
-
-          body: JSON.stringify({
-
-            name: name,
-
-            category: category,
-
-            price: price,
-
-            description: description,
-
-            is_available: false
-
-          })
-        }
-      );
-
-
-    const text =
-      await response.text();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        text ||
-        "Could not add menu item."
-      );
-    }
-
-
-    document
-      .getElementById("foodName")
-      .value = "";
-
-    document
-      .getElementById("foodPrice")
-      .value = "";
-
-    document
-      .getElementById("foodDescription")
-      .value = "";
-
-
-    showMessage(
-      "adminMessage",
-      "Menu item added successfully! 🎉",
-      "success"
-    );
-
-
-    await loadMenu();
-
-  }
-
-  catch (error) {
-
-    showMessage(
-      "adminMessage",
-      "Could not add menu item: " +
-      error.message,
-      "error"
-    );
-
-  }
+}catch(e){
+message("msg","Could not delete item: "+e.message,true);
+}
 
 }
 
 
-/* =========================================
-   LOAD MENU
-========================================= */
+/* BUSINESS INFO */
 
-async function loadMenu() {
+async function loadBusiness(){
 
-  const list =
-    document.getElementById("menuList");
+try{
 
+let r=await api(
+"/rest/v1/business_settings?select=*&limit=1"
+);
 
-  list.innerHTML =
-    '<div class="loading">Loading menu...</div>';
+if(!r.ok)return;
 
+let data=await r.json();
 
-  try {
+if(data.length){
 
-    const response =
-      await supabaseRequest(
-        "/rest/v1/menu_items?select=*&order=id.asc"
-      );
+let x=data[0];
 
+$("businessName").value=x.business_name||"";
+$("location").value=x.location||"";
+$("whatsapp").value=x.whatsapp_number||"";
+$("delivery").value=x.delivery_information||"";
 
-    const text =
-      await response.text();
+}
 
-
-    if (!response.ok) {
-
-      throw new Error(
-        "Supabase error " +
-        response.status +
-        ": " +
-        text
-      );
-    }
-
-
-    let items;
-
-    try {
-
-      items =
-        JSON.parse(text);
-
-    } catch (error) {
-
-      throw new Error(
-        "Invalid response from Supabase: " +
-        text
-      );
-
-    }
-
-
-    if (!items.length) {
-
-      list.innerHTML =
-        '<div class="empty">No menu items yet.</div>';
-
-      return;
-    }
-
-
-    list.innerHTML = "";
-
-
-    items.forEach(function(item) {
-
-      const card =
-        document.createElement("div");
-
-      card.className =
-        "menu-item";
-
-
-      const available =
-        item.is_available === true ||
-        item.available === true;
-
-
-      const name =
-        item.name ||
-        item.food_name ||
-        "Menu Item";
-
-
-      const category =
-        item.category ||
-        "OTHER";
-
-
-      const price =
-        Number(item.price || 0)
-          .toFixed(2);
-
-
-      const description =
-        item.description ||
-        "";
-
-
-      const title =
-        document.createElement("h3");
-
-      title.textContent =
-        name;
-
-
-      const meta =
-        document.createElement("div");
-
-      meta.className =
-        "menu-meta";
-
-      meta.textContent =
-        category + " • R" + price;
-
-
-      card.appendChild(title);
-      card.appendChild(meta);
-
-
-      if (description) {
-
-        const desc =
-          document.createElement("p");
-
-        desc.textContent =
-          description;
-
-        card.appendChild(desc);
-
-      }
-
-
-      const status =
-        document.createElement("div");
-
-      status.className =
-        "status " +
-        (
-          available
-            ? "available"
-            : "unavailable"
-        );
-
-      status.textContent =
-        available
-          ? "● AVAILABLE"
-          : "● UNAVAILABLE";
-
-
-      card.appendChild(status);
-
-
-      const actions =
-        document.createElement("div");
-
-      actions.className =
-        "actions";
-
-
-      const priceButton =
-        document.createElement("button");
-
-      priceButton.type =
-        "button";
-
-      priceButton.className =
-        "price-btn";
-
-      priceButton.textContent =
-        "💰 CHANGE PRICE";
-
-      priceButton.addEventListener(
-        "click",
-        function() {
-          changePrice(
-            item.id,
-            Number(item.price || 0)
-          );
-        }
-      );
-
-
-      const availabilityButton =
-        document.createElement("button");
-
-      availabilityButton.type =
-        "button";
-
-      availabilityButton.className =
-        "availability-btn";
-
-      availabilityButton.textContent =
-        available
-          ? "🔴 MARK UNAVAILABLE"
-          : "🟢 MARK AVAILABLE";
-
-
-      availabilityButton.addEventListener(
-        "click",
-        function() {
-          toggleAvailability(
-            item.id,
-            available
-          );
-        }
-      );
-
-
-      const deleteButton =
-        document.createElement("button");
-
-      deleteButton.type =
-        "button";
-
-      deleteButton.className =
-        "delete-btn";
-
-      deleteButton.textContent =
-        "🗑️ DELETE";
-
-
-      deleteButton.addEventListener(
-        "click",
-        function() {
-          deleteMenuItem(item.id);
-        }
-      );
-
-
-      actions.appendChild(priceButton);
-      actions.appendChild(availabilityButton);
-      actions.appendChild(deleteButton);
-
-
-      card.appendChild(actions);
-
-      list.appendChild(card);
-
-    });
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "LOAD MENU ERROR:",
-      error
-    );
-
-
-    list.innerHTML =
-      '<div class="empty">' +
-      '<strong>Could not load menu.</strong>' +
-      '<div class="debug">' +
-      escapeHTML(error.message) +
-      '</div>' +
-      '</div>';
-
-
-    showMessage(
-      "adminMessage",
-      "Menu loading failed. See the error under Current Menu.",
-      "error"
-    );
-
-  }
+}catch(e){
+console.log(e);
+}
 
 }
 
 
-/* =========================================
-   CHANGE PRICE
-========================================= */
+/* SAVE BUSINESS */
 
-async function changePrice(
-  id,
-  oldPrice
-) {
+$("save").onclick=async()=>{
 
-  const newPrice =
-    prompt(
-      "Enter the new price (R):",
-      oldPrice
-    );
+let body={
+business_name:$("businessName").value.trim(),
+location:$("location").value.trim(),
+whatsapp_number:$("whatsapp").value.trim(),
+delivery_information:$("delivery").value.trim()
+};
 
+try{
 
-  if (
-    newPrice === null ||
-    newPrice.trim() === ""
-  ) {
-    return;
-  }
+let check=await api(
+"/rest/v1/business_settings?select=id&limit=1"
+);
 
+if(!check.ok)throw Error(await check.text());
 
-  const price =
-    Number(newPrice);
+let data=await check.json();
+let r;
 
+if(data.length){
 
-  if (
-    Number.isNaN(price) ||
-    price < 0
-  ) {
+r=await api(
+"/rest/v1/business_settings?id=eq."+data[0].id,
+{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify(body)
+}
+);
 
-    alert(
-      "Please enter a valid price."
-    );
+}else{
 
-    return;
-  }
+r=await api(
+"/rest/v1/business_settings",
+{
+method:"POST",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify(body)
+}
+);
 
+}
 
-  try {
+if(!r.ok)throw Error(await r.text());
 
-    const response =
-      await supabaseRequest(
-        "/rest/v1/menu_items?id=eq." +
-        id,
-        {
-          method: "PATCH",
+message("msg","Business information saved! 💾");
 
-          headers: {
-            "Prefer":
-              "return=representation"
-          },
+}catch(e){
 
-          body: JSON.stringify({
-            price: price
-          })
-        }
-      );
+message("msg","Could not save: "+e.message,true);
+
+}
+
+};
 
 
-    const text =
-      await response.text();
+/* SECURITY */
+
+function safe(x){
+
+return String(x)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
 
 
-    if (!response.ok) {
+/* REMEMBER LOGIN */
 
-      throw new Error(
-        text ||
-        "Could not change price."
-      );
-    }
+try{
 
+let saved=localStorage.getItem("qzzcity_session");
 
-    showMessage(
-      "adminMessage",
-      "Price updated successfully! 💰",
-      "success"
-    );
+if(saved){
 
+let s=JSON.parse(saved);
 
-    await loadMenu();
+if(s&&s.access_token){
 
-  }
+session=s;
+showAdmin();
 
-  catch (error) {
+}
 
-    showMessage(
-      "adminMessage",
-      "Co
+}
+
+}catch(e){
+
+localStorage.removeItem("qzzcity_session");
+
+}
+
+</script>
+
+</body>
+  </html>
